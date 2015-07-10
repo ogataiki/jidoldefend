@@ -1,0 +1,470 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5034A3661B4F390D00679610 /* GrowPassion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 5034A3651B4F390D00679610 /* GrowPassion.sks */; };
+		5034A3681B4F3F3A00679610 /* DownPassion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 5034A3671B4F3F3A00679610 /* DownPassion.sks */; };
+		5034A36A1B4F43D500679610 /* sparkline.png in Resources */ = {isa = PBXBuildFile; fileRef = 5034A3691B4F43D500679610 /* sparkline.png */; };
+		5034A36E1B4F4DE400679610 /* toucheffect.png in Resources */ = {isa = PBXBuildFile; fileRef = 5034A36D1B4F4DE400679610 /* toucheffect.png */; };
+		506772E91B4A567B00AF3C41 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506772E81B4A567B00AF3C41 /* AppDelegate.swift */; };
+		506772EB1B4A567B00AF3C41 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 506772EA1B4A567B00AF3C41 /* GameScene.sks */; };
+		506772ED1B4A567B00AF3C41 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506772EC1B4A567B00AF3C41 /* GameScene.swift */; };
+		506772EF1B4A567B00AF3C41 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506772EE1B4A567B00AF3C41 /* GameViewController.swift */; };
+		506772F21B4A567B00AF3C41 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 506772F01B4A567B00AF3C41 /* Main.storyboard */; };
+		506772F41B4A567B00AF3C41 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 506772F31B4A567B00AF3C41 /* Images.xcassets */; };
+		506772F71B4A567B00AF3C41 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 506772F51B4A567B00AF3C41 /* LaunchScreen.xib */; };
+		506773031B4A567B00AF3C41 /* jidoldefendTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506773021B4A567B00AF3C41 /* jidoldefendTests.swift */; };
+		50D482EC1B4C96BE0072DF94 /* IdolBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D482EB1B4C96BE0072DF94 /* IdolBase.swift */; };
+		50D482EE1B4C97BA0072DF94 /* OtakuBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D482ED1B4C97BA0072DF94 /* OtakuBase.swift */; };
+		50D482F11B4CC2A00072DF94 /* PassionFire.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50D482EF1B4CC2A00072DF94 /* PassionFire.sks */; };
+		50D482F21B4CC2A00072DF94 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 50D482F01B4CC2A00072DF94 /* spark.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		506772FD1B4A567B00AF3C41 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 506772DB1B4A567B00AF3C41 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 506772E21B4A567B00AF3C41;
+			remoteInfo = jidoldefend;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5034A3651B4F390D00679610 /* GrowPassion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GrowPassion.sks; sourceTree = "<group>"; };
+		5034A3671B4F3F3A00679610 /* DownPassion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = DownPassion.sks; sourceTree = "<group>"; };
+		5034A3691B4F43D500679610 /* sparkline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sparkline.png; sourceTree = "<group>"; };
+		5034A36D1B4F4DE400679610 /* toucheffect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toucheffect.png; sourceTree = "<group>"; };
+		506772E31B4A567B00AF3C41 /* jidoldefend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jidoldefend.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		506772E71B4A567B00AF3C41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		506772E81B4A567B00AF3C41 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		506772EA1B4A567B00AF3C41 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
+		506772EC1B4A567B00AF3C41 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		506772EE1B4A567B00AF3C41 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		506772F11B4A567B00AF3C41 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		506772F31B4A567B00AF3C41 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		506772F61B4A567B00AF3C41 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		506772FC1B4A567B00AF3C41 /* jidoldefendTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = jidoldefendTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		506773011B4A567B00AF3C41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		506773021B4A567B00AF3C41 /* jidoldefendTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = jidoldefendTests.swift; sourceTree = "<group>"; };
+		50D482EB1B4C96BE0072DF94 /* IdolBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdolBase.swift; sourceTree = "<group>"; };
+		50D482ED1B4C97BA0072DF94 /* OtakuBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtakuBase.swift; sourceTree = "<group>"; };
+		50D482EF1B4CC2A00072DF94 /* PassionFire.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = PassionFire.sks; sourceTree = "<group>"; };
+		50D482F01B4CC2A00072DF94 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		506772E01B4A567B00AF3C41 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		506772F91B4A567B00AF3C41 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		506772DA1B4A567B00AF3C41 = {
+			isa = PBXGroup;
+			children = (
+				506772E51B4A567B00AF3C41 /* jidoldefend */,
+				506772FF1B4A567B00AF3C41 /* jidoldefendTests */,
+				506772E41B4A567B00AF3C41 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		506772E41B4A567B00AF3C41 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				506772E31B4A567B00AF3C41 /* jidoldefend.app */,
+				506772FC1B4A567B00AF3C41 /* jidoldefendTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		506772E51B4A567B00AF3C41 /* jidoldefend */ = {
+			isa = PBXGroup;
+			children = (
+				506772E81B4A567B00AF3C41 /* AppDelegate.swift */,
+				506772EA1B4A567B00AF3C41 /* GameScene.sks */,
+				506772EC1B4A567B00AF3C41 /* GameScene.swift */,
+				506772EE1B4A567B00AF3C41 /* GameViewController.swift */,
+				50D482EB1B4C96BE0072DF94 /* IdolBase.swift */,
+				50D482ED1B4C97BA0072DF94 /* OtakuBase.swift */,
+				506772F01B4A567B00AF3C41 /* Main.storyboard */,
+				506772F31B4A567B00AF3C41 /* Images.xcassets */,
+				506772F51B4A567B00AF3C41 /* LaunchScreen.xib */,
+				506772E61B4A567B00AF3C41 /* Supporting Files */,
+				50D482EF1B4CC2A00072DF94 /* PassionFire.sks */,
+				5034A3651B4F390D00679610 /* GrowPassion.sks */,
+				5034A3671B4F3F3A00679610 /* DownPassion.sks */,
+				50D482F01B4CC2A00072DF94 /* spark.png */,
+				5034A3691B4F43D500679610 /* sparkline.png */,
+				5034A36D1B4F4DE400679610 /* toucheffect.png */,
+			);
+			path = jidoldefend;
+			sourceTree = "<group>";
+		};
+		506772E61B4A567B00AF3C41 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				506772E71B4A567B00AF3C41 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		506772FF1B4A567B00AF3C41 /* jidoldefendTests */ = {
+			isa = PBXGroup;
+			children = (
+				506773021B4A567B00AF3C41 /* jidoldefendTests.swift */,
+				506773001B4A567B00AF3C41 /* Supporting Files */,
+			);
+			path = jidoldefendTests;
+			sourceTree = "<group>";
+		};
+		506773001B4A567B00AF3C41 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				506773011B4A567B00AF3C41 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		506772E21B4A567B00AF3C41 /* jidoldefend */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 506773061B4A567B00AF3C41 /* Build configuration list for PBXNativeTarget "jidoldefend" */;
+			buildPhases = (
+				506772DF1B4A567B00AF3C41 /* Sources */,
+				506772E01B4A567B00AF3C41 /* Frameworks */,
+				506772E11B4A567B00AF3C41 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = jidoldefend;
+			productName = jidoldefend;
+			productReference = 506772E31B4A567B00AF3C41 /* jidoldefend.app */;
+			productType = "com.apple.product-type.application";
+		};
+		506772FB1B4A567B00AF3C41 /* jidoldefendTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 506773091B4A567B00AF3C41 /* Build configuration list for PBXNativeTarget "jidoldefendTests" */;
+			buildPhases = (
+				506772F81B4A567B00AF3C41 /* Sources */,
+				506772F91B4A567B00AF3C41 /* Frameworks */,
+				506772FA1B4A567B00AF3C41 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				506772FE1B4A567B00AF3C41 /* PBXTargetDependency */,
+			);
+			name = jidoldefendTests;
+			productName = jidoldefendTests;
+			productReference = 506772FC1B4A567B00AF3C41 /* jidoldefendTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		506772DB1B4A567B00AF3C41 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0630;
+				ORGANIZATIONNAME = ogataiki;
+				TargetAttributes = {
+					506772E21B4A567B00AF3C41 = {
+						CreatedOnToolsVersion = 6.3.1;
+					};
+					506772FB1B4A567B00AF3C41 = {
+						CreatedOnToolsVersion = 6.3.1;
+						TestTargetID = 506772E21B4A567B00AF3C41;
+					};
+				};
+			};
+			buildConfigurationList = 506772DE1B4A567B00AF3C41 /* Build configuration list for PBXProject "jidoldefend" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 506772DA1B4A567B00AF3C41;
+			productRefGroup = 506772E41B4A567B00AF3C41 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				506772E21B4A567B00AF3C41 /* jidoldefend */,
+				506772FB1B4A567B00AF3C41 /* jidoldefendTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		506772E11B4A567B00AF3C41 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5034A36A1B4F43D500679610 /* sparkline.png in Resources */,
+				506772F71B4A567B00AF3C41 /* LaunchScreen.xib in Resources */,
+				50D482F21B4CC2A00072DF94 /* spark.png in Resources */,
+				506772F41B4A567B00AF3C41 /* Images.xcassets in Resources */,
+				5034A36E1B4F4DE400679610 /* toucheffect.png in Resources */,
+				5034A3681B4F3F3A00679610 /* DownPassion.sks in Resources */,
+				5034A3661B4F390D00679610 /* GrowPassion.sks in Resources */,
+				506772EB1B4A567B00AF3C41 /* GameScene.sks in Resources */,
+				50D482F11B4CC2A00072DF94 /* PassionFire.sks in Resources */,
+				506772F21B4A567B00AF3C41 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		506772FA1B4A567B00AF3C41 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		506772DF1B4A567B00AF3C41 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50D482EE1B4C97BA0072DF94 /* OtakuBase.swift in Sources */,
+				50D482EC1B4C96BE0072DF94 /* IdolBase.swift in Sources */,
+				506772ED1B4A567B00AF3C41 /* GameScene.swift in Sources */,
+				506772EF1B4A567B00AF3C41 /* GameViewController.swift in Sources */,
+				506772E91B4A567B00AF3C41 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		506772F81B4A567B00AF3C41 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				506773031B4A567B00AF3C41 /* jidoldefendTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		506772FE1B4A567B00AF3C41 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 506772E21B4A567B00AF3C41 /* jidoldefend */;
+			targetProxy = 506772FD1B4A567B00AF3C41 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		506772F01B4A567B00AF3C41 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				506772F11B4A567B00AF3C41 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		506772F51B4A567B00AF3C41 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				506772F61B4A567B00AF3C41 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		506773041B4A567B00AF3C41 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		506773051B4A567B00AF3C41 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		506773071B4A567B00AF3C41 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = jidoldefend/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "363bb7c5-de95-4c1b-bbfd-d1fbb0f1ae45";
+			};
+			name = Debug;
+		};
+		506773081B4A567B00AF3C41 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = jidoldefend/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "363bb7c5-de95-4c1b-bbfd-d1fbb0f1ae45";
+			};
+			name = Release;
+		};
+		5067730A1B4A567B00AF3C41 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = jidoldefendTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/jidoldefend.app/jidoldefend";
+			};
+			name = Debug;
+		};
+		5067730B1B4A567B00AF3C41 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = jidoldefendTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/jidoldefend.app/jidoldefend";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		506772DE1B4A567B00AF3C41 /* Build configuration list for PBXProject "jidoldefend" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				506773041B4A567B00AF3C41 /* Debug */,
+				506773051B4A567B00AF3C41 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		506773061B4A567B00AF3C41 /* Build configuration list for PBXNativeTarget "jidoldefend" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				506773071B4A567B00AF3C41 /* Debug */,
+				506773081B4A567B00AF3C41 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		506773091B4A567B00AF3C41 /* Build configuration list for PBXNativeTarget "jidoldefendTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5067730A1B4A567B00AF3C41 /* Debug */,
+				5067730B1B4A567B00AF3C41 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 506772DB1B4A567B00AF3C41 /* Project object */;
+}
