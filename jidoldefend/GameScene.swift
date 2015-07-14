@@ -15,6 +15,24 @@ class GameScene: SKScene {
         case bad = "otaku_bad"
     }
     
+    let speechZPosition: CGFloat = -2;
+    // 発生時
+    var otakuSpeechBox_NormalAdd: [String] = [
+        "なになに？", "アイドル？", "かわいくね？", "まあまあじゃん？", "ふ〜ん", "みえそう", "いいじゃん", "興味ないね", "萌え？", "くさくね？",
+    ];
+    // パッションアップ時
+    var otakuSpeechBox_NormalPassion: [String] = [
+        "可愛い！", "たぎってきた", "いいかんじ", "おお！", "これは！", "みえた！", "近い！", "興味あるね", "萌え！", "いい匂い",
+    ];
+    // 昇天時
+    var otakuSpeechBox_NormalGoHeven: [String] = [
+        "最高！！", "これがアイドル！", "激カワ！", "ウヒョー！", "超好き！", "今日キレてるよ！", "でそう", "ぶべら！！", "キュン死なう", "っぺピピャ！！",
+    ];
+    // 帰宅時
+    var otakuSpeechBox_NormalGoHome: [String] = [
+        "冷める", "見る価値なし", "ぶっさ", "つまんね", "飯くい行こ", "みえねーじゃん", "で？", "ハイワロ", "萌えとかwww", "一生懸命さが足りない",
+    ];
+    
     
     let velocity_max: CGFloat = 50.0;
     let idol_velocity: CGFloat = 100.0;
@@ -36,9 +54,30 @@ class GameScene: SKScene {
     var otaku_add_positions: [CGPoint] = [];
     var otaku_hevened_count: UInt = 0;
     
+    var touchEffect: SKSpriteNode!;
+    
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         self.physicsBody = SKPhysicsBody(edgeLoopFromRect: self.frame);
+        
+        let back = SKSpriteNode(imageNamed: "back");
+        back.position = view.center;
+        let widthdiff = view.frame.size.width - back.size.width;
+        let heightdiff = view.frame.size.height - back.size.height;
+        if heightdiff > 0 && heightdiff >= widthdiff {
+            back.xScale = view.frame.size.height / back.size.height;
+            back.yScale = view.frame.size.height / back.size.height;
+        }
+        else if widthdiff > 0 && widthdiff >= heightdiff {
+            back.xScale = view.frame.size.width / back.size.width;
+            back.yScale = view.frame.size.width / back.size.width;
+        }
+        else {
+            back.xScale = 1.0;
+            back.yScale = 1.0;
+        }
+        back.zPosition = -10;
+        self.addChild(back);
 
         generateIdol();
         
@@ -70,7 +109,7 @@ class GameScene: SKScene {
         
         for touch in (touches as! Set<UITouch>) {
             
-            addTouchEffect(touch.locationInNode(self));
+            moveTouchEffect(touch.locationInNode(self));
 
             isTouch = true;
             touchLocation = touch.locationInNode(self)
@@ -84,6 +123,7 @@ class GameScene: SKScene {
         
         for touch in (touches as! Set<UITouch>) {
             isTouch = false;
+            removeTouchEffect();
         }
     }
     override func touchesCancelled(touches: Set<NSObject>, withEvent event: UIEvent) {
@@ -91,29 +131,42 @@ class GameScene: SKScene {
         
         for touch in (touches as! Set<UITouch>) {
             isTouch = false;
+            removeTouchEffect();
         }
     }
 
     func addTouchEffect(location: CGPoint) {
-        let touchEffect = SKSpriteNode(imageNamed: "toucheffect");
+        touchEffect = SKSpriteNode(imageNamed: "toucheffect");
         touchEffect.position = location;
-        touchEffect.blendMode = SKBlendMode.Screen;
+        touchEffect.blendMode = SKBlendMode.Add;
         touchEffect.zPosition = 10;
-        touchEffect.xScale = 1.3;
-        touchEffect.yScale = 1.3;
-        touchEffect.alpha = 0.3;
+        touchEffect.alpha = 0.6;
+        self.touchEffect.xScale = 1.0;
+        self.touchEffect.yScale = 1.0;
         self.addChild(touchEffect);
         
-        let scale = SKAction.scaleBy(1.5, duration: 0.1);
+        let scale = SKAction.scaleTo(2.5, duration: 0.1);
         let fade = SKAction.fadeAlphaTo(0, duration: 0.1);
         let group = SKAction.group([scale, fade]);
-        let finish = SKAction.runBlock { () -> Void in
-            touchEffect.removeFromParent();
-        }
-        let seq = SKAction.sequence([group, finish]);
+        let scale2 = SKAction.scaleTo(1.0, duration: 0.2);
+        let fade2 = SKAction.fadeAlphaTo(0.6, duration: 0.2);
+        let group2 = SKAction.group([scale2, fade2]);
+        let seq = SKAction.sequence([group, group2]);
         touchEffect.runAction(SKAction.repeatActionForever(seq));
     }
-    
+    func moveTouchEffect(location: CGPoint) {
+        
+        if let effect = touchEffect {
+            touchEffect.position = location;
+        }
+    }
+    func removeTouchEffect() {
+        
+        if let effect = touchEffect {
+            touchEffect.removeFromParent();
+            touchEffect = nil;
+        }
+    }
     
     
     override func update(currentTime: CFTimeInterval) {
@@ -388,6 +441,12 @@ class GameScene: SKScene {
         
         self.addChild(otaku);
         
+        otaku.runSpeech(otakuSpeechBox_NormalAdd[Int(arc4random()) % otakuSpeechBox_NormalAdd.count]
+            , balloon: OtakuBase.SpeechBalloon.normal
+            , action: OtakuBase.SpeechAction.normal
+            , frame: 90
+            , target: self, z: speechZPosition)
+        
         otaku.tag = "\(otaku_list.count)"
         otaku_active_map[otaku.tag] = otaku;
         
@@ -396,6 +455,12 @@ class GameScene: SKScene {
     
     func otakuGoHeven(otaku: OtakuBase) {
         
+        otaku.runSpeech(otakuSpeechBox_NormalGoHeven[Int(arc4random()) % otakuSpeechBox_NormalGoHeven.count]
+            , balloon: OtakuBase.SpeechBalloon.powerful
+            , action: OtakuBase.SpeechAction.powerful
+            , frame: 90
+            , target: self, z: speechZPosition)
+
         otaku_hevened_count++;
 
         otaku.removeAllPaticle();
@@ -410,6 +475,12 @@ class GameScene: SKScene {
         
     }
     func otakuGoHome(otaku: OtakuBase) {
+        
+        otaku.runSpeech(otakuSpeechBox_NormalGoHome[Int(arc4random()) % otakuSpeechBox_NormalGoHome.count]
+            , balloon: OtakuBase.SpeechBalloon.rect
+            , action: OtakuBase.SpeechAction.normal
+            , frame: 90
+            , target: self, z: speechZPosition)
         
         otaku.removeAllPaticle();
 
@@ -442,12 +513,22 @@ class GameScene: SKScene {
                 
                 // 熱い時は炎を纏う
                 if( otaku.passion > otaku.newAddPassionThreshold ) {
+                    
+                    if let fire = otaku.passionFireParticle {}
+                    else {
+                        otaku.runSpeech(otakuSpeechBox_NormalPassion[Int(arc4random()) % otakuSpeechBox_NormalPassion.count]
+                            , balloon: OtakuBase.SpeechBalloon.normal
+                            , action: OtakuBase.SpeechAction.jump
+                            , frame: 90
+                            , target: self, z: speechZPosition)
+                    }
+
                     otaku.addPassionFire(self, z:-1);
                 }
             }
             else {
                 //遠いほど冷める
-                otaku.addPassion(Int((distance - otaku.passionAddDistanceLimit) * -0.01));
+                otaku.addPassion(Int((distance - otaku.passionAddDistanceLimit) * -0.05));
                 
                 // 冷めている演出消す
                 if(otaku.passion > 0) {

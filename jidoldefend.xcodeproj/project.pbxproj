@@ -11,6 +11,7 @@
 		5034A3681B4F3F3A00679610 /* DownPassion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 5034A3671B4F3F3A00679610 /* DownPassion.sks */; };
 		5034A36A1B4F43D500679610 /* sparkline.png in Resources */ = {isa = PBXBuildFile; fileRef = 5034A3691B4F43D500679610 /* sparkline.png */; };
 		5034A36E1B4F4DE400679610 /* toucheffect.png in Resources */ = {isa = PBXBuildFile; fileRef = 5034A36D1B4F4DE400679610 /* toucheffect.png */; };
+		506446A31B5394CC00003578 /* SpeechBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506446A21B5394CC00003578 /* SpeechBase.swift */; };
 		506772E91B4A567B00AF3C41 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506772E81B4A567B00AF3C41 /* AppDelegate.swift */; };
 		506772EB1B4A567B00AF3C41 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 506772EA1B4A567B00AF3C41 /* GameScene.sks */; };
 		506772ED1B4A567B00AF3C41 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506772EC1B4A567B00AF3C41 /* GameScene.swift */; };
@@ -40,6 +41,7 @@
 		5034A3671B4F3F3A00679610 /* DownPassion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = DownPassion.sks; sourceTree = "<group>"; };
 		5034A3691B4F43D500679610 /* sparkline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sparkline.png; sourceTree = "<group>"; };
 		5034A36D1B4F4DE400679610 /* toucheffect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toucheffect.png; sourceTree = "<group>"; };
+		506446A21B5394CC00003578 /* SpeechBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechBase.swift; sourceTree = "<group>"; };
 		506772E31B4A567B00AF3C41 /* jidoldefend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jidoldefend.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		506772E71B4A567B00AF3C41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		506772E81B4A567B00AF3C41 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 				506772EE1B4A567B00AF3C41 /* GameViewController.swift */,
 				50D482EB1B4C96BE0072DF94 /* IdolBase.swift */,
 				50D482ED1B4C97BA0072DF94 /* OtakuBase.swift */,
+				506446A21B5394CC00003578 /* SpeechBase.swift */,
 				506772F01B4A567B00AF3C41 /* Main.storyboard */,
 				506772F31B4A567B00AF3C41 /* Images.xcassets */,
 				506772F51B4A567B00AF3C41 /* LaunchScreen.xib */,
@@ -253,6 +256,7 @@
 				50D482EC1B4C96BE0072DF94 /* IdolBase.swift in Sources */,
 				506772ED1B4A567B00AF3C41 /* GameScene.swift in Sources */,
 				506772EF1B4A567B00AF3C41 /* GameViewController.swift in Sources */,
+				506446A31B5394CC00003578 /* SpeechBase.swift in Sources */,
 				506772E91B4A567B00AF3C41 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

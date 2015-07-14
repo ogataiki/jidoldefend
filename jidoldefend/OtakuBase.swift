@@ -7,7 +7,7 @@ class OtakuBase : SKSpriteNode {
     // 熱中度関連
     var passion: UInt32 = 0;
     var passionOverFlowLimit: UInt32 = 1000;
-    var passionAddDistanceLimit: CGFloat = 150;
+    var passionAddDistanceLimit: CGFloat = 200;
     var passionAddInterval: UInt32 = 250;
     var passionAddLastDate: NSDate = NSDate();
     
@@ -30,6 +30,16 @@ class OtakuBase : SKSpriteNode {
     var passionFireParticle: SKEmitterNode!;
     var growPassionParticle: SKEmitterNode!;
     var downPassionParticle: SKEmitterNode!;
+    
+    // 台詞
+    enum SpeechAction: Int {
+        case normal = 0, jump, powerful
+    }
+    enum SpeechBalloon: String {
+        case normal = "otaku_speech1"
+        case powerful = "otaku_speech2"
+        case rect = "otaku_speech3"
+    }
     
     var isHevened: Bool = false;
 
@@ -130,7 +140,7 @@ class OtakuBase : SKSpriteNode {
             let path = NSBundle.mainBundle().pathForResource("GrowPassion", ofType: "sks")!;
             var particle = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as! SKEmitterNode
             
-            particle.position = CGPointMake(self.position.x, self.position.y - self.size.height*0.5);
+            particle.position = CGPointMake(self.position.x, self.position.y - self.size.height*0.2);
             
             //particle.numParticlesToEmit = 50 // 何個、粒を出すか。
             //particle.particleBirthRate = 50 // 一秒間に何個、粒を出すか。
@@ -146,7 +156,7 @@ class OtakuBase : SKSpriteNode {
     }
     func updateGrowPassion() {
         if let fire = growPassionParticle {
-            fire.position = CGPointMake(self.position.x, self.position.y - self.size.height*0.5);
+            fire.position = CGPointMake(self.position.x, self.position.y - self.size.height*0.2);
         }
     }
     func removeGrowPassion() {
@@ -164,7 +174,7 @@ class OtakuBase : SKSpriteNode {
             let path = NSBundle.mainBundle().pathForResource("DownPassion", ofType: "sks")!;
             var particle = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as! SKEmitterNode
             
-            particle.position = CGPointMake(self.position.x, self.position.y + self.size.height*0.3);
+            particle.position = CGPointMake(self.position.x, self.position.y + self.size.height*0.25);
             
             //particle.numParticlesToEmit = 50 // 何個、粒を出すか。
             //particle.particleBirthRate = 50 // 一秒間に何個、粒を出すか。
@@ -180,7 +190,7 @@ class OtakuBase : SKSpriteNode {
     }
     func updateDownPassion() {
         if let fire = downPassionParticle {
-            fire.position = CGPointMake(self.position.x, self.position.y + self.size.height*0.3);
+            fire.position = CGPointMake(self.position.x, self.position.y + self.size.height*0.25);
         }
     }
     func removeDownPassion() {
@@ -198,7 +208,7 @@ class OtakuBase : SKSpriteNode {
             let path = NSBundle.mainBundle().pathForResource("PassionFire", ofType: "sks")!;
             var particle = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as! SKEmitterNode
             
-            particle.position = CGPointMake(self.position.x, self.position.y);
+            particle.position = CGPointMake(self.position.x, self.position.y - self.size.height);
             
             //particle.numParticlesToEmit = 50 // 何個、粒を出すか。
             //particle.particleBirthRate = 50 // 一秒間に何個、粒を出すか。
@@ -214,7 +224,7 @@ class OtakuBase : SKSpriteNode {
     }
     func updatePassionFire() {
         if let fire = passionFireParticle {
-            fire.position = CGPointMake(self.position.x, self.position.y);
+            fire.position = CGPointMake(self.position.x, self.position.y + self.size.height*0.1);
         }
     }
     func removePassionFire() {
@@ -237,6 +247,70 @@ class OtakuBase : SKSpriteNode {
         removeGrowPassion();
         removeDownPassion();
         removePassionFire();
+    }
+    
+    
+    func runSpeech(text: String
+        , balloon: SpeechBalloon
+        , action: SpeechAction
+        , frame: Int
+        , target: SKScene
+        , z: CGFloat)
+    {
+        let speech = SpeechBase(imageNamed: balloon.rawValue);
+        // 基本はキャラの左上に表示
+        let widthoffset: CGFloat = 0.6;
+        let heightoffset: CGFloat = 0.5;
+        speech.position = CGPointMake(self.position.x - speech.size.width*widthoffset
+            , self.position.y + speech.size.height*heightoffset);
+        if(speech.position.x - speech.size.width*0.5 < target.frame.origin.x) {
+            // 左が見切れる場合は右側に表示
+            speech.position.x = self.position.x + speech.size.width*widthoffset;
+            speech.xScale = -1.0;
+        }
+        if(speech.position.y + speech.size.height*0.5 > target.frame.origin.y + target.size.height) {
+            // 上が見切れる場合は下側に表示
+            speech.position.y = self.position.y - speech.size.height*heightoffset;
+            speech.yScale = -1.0;
+        }
+        speech.zPosition = z;
+        speech.setText(text);
+        target.addChild(speech);
+        
+        var seqActions: [SKAction] = [];
+        switch(action) {
+        case SpeechAction.normal:
+            break;
+        case SpeechAction.jump:
+            seqActions.append(SKAction.moveBy(CGVectorMake(0.0, 0.1), duration: 0.1))
+            seqActions.append(SKAction.moveBy(CGVectorMake(0.0, -0.1), duration: 0.1))
+            seqActions.append(SKAction.moveBy(CGVectorMake(0.0, 0.1), duration: 0.1))
+            seqActions.append(SKAction.moveBy(CGVectorMake(0.0, -0.1), duration: 0.1))
+        case SpeechAction.powerful:
+            let xscale = speech.xScale;
+            let yscale = speech.yScale;
+            speech.xScale = 0.0;
+            speech.yScale = 0.0;
+            
+            seqActions.append(SKAction.group([SKAction.scaleXTo(xscale*1.2, duration: 0.2)
+                , SKAction.scaleYTo(yscale*1.2, duration: 0.2)
+                ]))
+            seqActions.append(SKAction.group([SKAction.scaleXTo(xscale*0.95, duration: 0.1)
+                , SKAction.scaleYTo(yscale*0.95, duration: 0.1)
+                ]));
+            seqActions.append(SKAction.group([SKAction.scaleXTo(xscale*1.0, duration: 0.1)
+                , SKAction.scaleYTo(yscale*1.0, duration: 0.1)
+                ]));
+        default:
+            break;
+        }
+        seqActions.append(SKAction.waitForDuration(1.0));
+        let endfunc = SKAction.runBlock { () -> Void in
+            speech.removeFromParent();
+        }
+        seqActions.append(endfunc);
+        let seq = SKAction.sequence(seqActions);
+        speech.runAction(seq);
     }
 
 }
