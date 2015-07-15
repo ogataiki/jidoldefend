@@ -7,7 +7,7 @@ class OtakuBase : SKSpriteNode {
     // 熱中度関連
     var passion: UInt32 = 0;
     var passionOverFlowLimit: UInt32 = 1000;
-    var passionAddDistanceLimit: CGFloat = 200;
+    var passionAddDistanceLimit: CGFloat = 160;
     var passionAddInterval: UInt32 = 250;
     var passionAddLastDate: NSDate = NSDate();
     
@@ -274,8 +274,8 @@ class OtakuBase : SKSpriteNode {
             speech.yScale = -1.0;
         }
         speech.zPosition = z;
-        speech.setText(text);
-        target.addChild(speech);
+        speech.addLabel(text);
+        target.addChild(speech);        
         
         var seqActions: [SKAction] = [];
         switch(action) {

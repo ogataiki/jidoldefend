@@ -56,7 +56,7 @@ class IdolBase : SKSpriteNode {
             speech.yScale = -1.0;
         }
         speech.zPosition = z;
-        speech.setText(text);
+        speech.addLabel(text);
         target.addChild(speech);
         
         var seqActions: [SKAction] = [];
@@ -88,7 +88,7 @@ class IdolBase : SKSpriteNode {
         }
         seqActions.append(SKAction.waitForDuration(1.0));
         let endfunc = SKAction.runBlock { () -> Void in
-            speech.removeFromParent();
+            speech.remove();
         }
         seqActions.append(endfunc);
         let seq = SKAction.sequence(seqActions);

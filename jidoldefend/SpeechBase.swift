@@ -2,8 +2,11 @@ import SpriteKit
 
 class SpeechBase : SKSpriteNode {
  
+    enum ZCtrl: CGFloat {
+        case label = 0
+    }
     var label: SKLabelNode!;
-    func setText (text: String) {
+    func addLabel (text: String) {
         if let l = label {
             label.removeFromParent();
             label = nil;
@@ -15,6 +18,13 @@ class SpeechBase : SKSpriteNode {
         label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center;
         label.xScale = self.xScale;
         label.yScale = self.yScale;
+        label.zPosition = ZCtrl.label.rawValue;
         self.addChild(label);
+    }
+    
+    func remove() {
+        label.removeFromParent();
+        label = nil;
+        self.removeFromParent();
     }
 }
