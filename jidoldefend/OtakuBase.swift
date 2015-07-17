@@ -313,4 +313,34 @@ class OtakuBase : SKSpriteNode {
         speech.runAction(seq);
     }
 
+    func runHevenEffect(idolPos: CGPoint, target: SKScene, z: CGFloat) {
+        
+        let lightBall = SKSpriteNode(imageNamed: "spark.png");
+        lightBall.blendMode = SKBlendMode.Add;
+        lightBall.color = UIColor.yellowColor();
+        lightBall.zPosition = z;
+        target.addChild(lightBall);
+        
+        var groupBall = SKAction.group([
+            ]);
+        var endBall = SKAction.runBlock { () -> Void in
+            lightBall.removeFromParent();
+        }
+        var actionBall = SKAction.sequence([endBall]);
+        lightBall.runAction(actionBall);
+        
+        for i in 0 ... 10 {
+            let line = SKSpriteNode(imageNamed: "sparkline.png");
+            line.blendMode = SKBlendMode.Add;
+            line.color = UIColor.yellowColor();
+            line.zPosition = z;
+            target.addChild(line);
+            
+            var endLine = SKAction.runBlock { () -> Void in
+                line.removeFromParent();
+            }
+            var actionLine = SKAction.sequence([endLine]);
+            line.runAction(actionLine);
+        }
+    }
 }
