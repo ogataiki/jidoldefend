@@ -10,6 +10,8 @@ class IdolBase : SKSpriteNode {
     var movingDate: NSDate = NSDate();
     var moveNextInterval: Int = 0;
     var moveVector: CGSize = CGSizeZero;
+    
+    var contactOtakus: [OtakuBase:OtakuBase] = [:];
 
     // 台詞
     enum SpeechAction: Int {
@@ -30,6 +32,10 @@ class IdolBase : SKSpriteNode {
             return true;
         }
         return false;
+    }
+    
+    func addFear(value: UInt32) {
+        fear += value;
     }
     
     func runSpeech(text: String

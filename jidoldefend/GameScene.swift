@@ -1,6 +1,6 @@
 import SpriteKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var isTouch: Bool = false;
     var touchLocation: CGPoint = CGPointMake(0, 0);
@@ -136,6 +136,8 @@ class GameScene: SKScene {
         
         // これしないと孫要素の表示順がおかしくなる
         view.ignoresSiblingOrder = false;
+        
+        self.physicsWorld.contactDelegate = self;
         
         gameFrame = CGRectMake(self.frame.origin.x
             , self.frame.origin.y + self.frame.size.height*0.15
@@ -277,7 +279,8 @@ class GameScene: SKScene {
             applyforce_last_date = date_now;
         }
         
-        idolMove();
+        updateIdol();
+        
         updateOtaku();
         
         var compSec: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitSecond
@@ -330,7 +333,7 @@ class GameScene: SKScene {
             idol.physicsBody?.categoryBitMask = idol_collision_category;
             
             //どのカテゴリのノードと衝突した場合に、デリゲートメソッドを呼び出すか示すフラグ
-            idol.physicsBody?.contactTestBitMask = 0x00000000;
+            idol.physicsBody?.contactTestBitMask = otaku_collision_category;
             
             //どのカテゴリのノードと衝突した場合に、反射運動させるかを示すフラグ
             idol.physicsBody?.collisionBitMask = otaku_collision_category;
@@ -350,54 +353,104 @@ class GameScene: SKScene {
         }
     }
     
-    func idolMove() {
+    func idolFearStart(idol: IdolBase, otaku: OtakuBase, speech: Bool = false) {
         
-        for idol in idol_list {
-            
-            if idol.isMoving {
-                
-                let target = idol_move_targets[Int(idol.moveTargetIndex)];
-                
-                var moveSeed: CGFloat = 0.002;
-                moveSeed = moveSeed + (CGFloat(otaku_hevened_count) * 0.0001);
-                
-                // 移動
-                if abs(target.x - idol.position.x) < abs(idol.moveVector.width*moveSeed) {
-                    idol.position.x = target.x;
-                }
-                else {
-                    idol.position.x += idol.moveVector.width*moveSeed;
-                }
-                if abs(target.y - idol.position.y) < abs(idol.moveVector.height*moveSeed) {
-                    idol.position.y = target.y;
-                }
-                else {
-                    idol.position.y += idol.moveVector.height*moveSeed;
-                }
-                
-                let date_now = NSDate();
-                let calendar = NSCalendar.currentCalendar()
-                var comp: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitSecond
-                    , fromDate: idol.movingDate
-                    , toDate: date_now
-                    , options:nil);
-                let s = comp.second;
-                if (s > idol.moveNextInterval) || (idol.position.x == target.x && idol.position.y == target.y)
-                {
-                    idol.isMoving = false;
-                }
+        idol.contactOtakus[otaku] = otaku;
+
+        switch otaku.name! {
+        case otaku_name.core.rawValue:
+            if speech {
+                idol.runSpeech("天パキモッ！"
+                    , balloon: IdolBase.SpeechBalloon.normal
+                    , action: IdolBase.SpeechAction.normal
+                    , frame: 90
+                    , target: self, z: ZCtrl.speech.rawValue)
             }
-            else {
-                idol.moveTargetIndex = arc4random() % UInt32(idol_move_targets.count);
-                let target = idol_move_targets[Int(idol.moveTargetIndex)];
-                idol.moveVector = CGSizeMake(target.x - idol.position.x, target.y - idol.position.y);
-                idol.movingDate = NSDate();
-                idol.moveNextInterval = Int(arc4random() % 10);
-                idol.isMoving = true;
+        case otaku_name.bad.rawValue:
+            if speech {
+                idol.runSpeech("メガネウザッ！"
+                    , balloon: IdolBase.SpeechBalloon.normal
+                    , action: IdolBase.SpeechAction.normal
+                    , frame: 90
+                    , target: self, z: ZCtrl.speech.rawValue)
+            }
+        default:
+            // その他は恐怖を感じない
+            break;
+        }
+    }
+    func idolFearEnd(idol: IdolBase, otaku: OtakuBase, speech: Bool = false) {
+        idol.contactOtakus[otaku] = nil;
+    }
+    
+    func updateIdolFear(idol: IdolBase) {
+        
+        let keys = idol.contactOtakus.keys;
+        for key in keys {
+            let otaku = idol.contactOtakus[key]!;
+            switch otaku.name! {
+            case otaku_name.core.rawValue:
+                idol.addFear(1);
+            case otaku_name.bad.rawValue:
+                idol.addFear(2);
+            default:
+                // その他は恐怖を感じない
+                break;
             }
         }
     }
     
+    func idolMove(idol: IdolBase) {
+        
+        if idol.isMoving {
+            
+            let target = idol_move_targets[Int(idol.moveTargetIndex)];
+            
+            var moveSeed: CGFloat = 0.002;
+            moveSeed = moveSeed + (CGFloat(otaku_hevened_count) * 0.0001);
+            
+            // 移動
+            if abs(target.x - idol.position.x) < abs(idol.moveVector.width*moveSeed) {
+                idol.position.x = target.x;
+            }
+            else {
+                idol.position.x += idol.moveVector.width*moveSeed;
+            }
+            if abs(target.y - idol.position.y) < abs(idol.moveVector.height*moveSeed) {
+                idol.position.y = target.y;
+            }
+            else {
+                idol.position.y += idol.moveVector.height*moveSeed;
+            }
+            
+            let date_now = NSDate();
+            let calendar = NSCalendar.currentCalendar()
+            var comp: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitSecond
+                , fromDate: idol.movingDate
+                , toDate: date_now
+                , options:nil);
+            let s = comp.second;
+            if (s > idol.moveNextInterval) || (idol.position.x == target.x && idol.position.y == target.y)
+            {
+                idol.isMoving = false;
+            }
+        }
+        else {
+            idol.moveTargetIndex = arc4random() % UInt32(idol_move_targets.count);
+            let target = idol_move_targets[Int(idol.moveTargetIndex)];
+            idol.moveVector = CGSizeMake(target.x - idol.position.x, target.y - idol.position.y);
+            idol.movingDate = NSDate();
+            idol.moveNextInterval = Int(arc4random() % 10);
+            idol.isMoving = true;
+        }
+    }
+    
+    func updateIdol() {
+        for idol in idol_list {
+            idolMove(idol);
+            updateIdolFear(idol);
+        }
+    }
     
     
     func calcVelocity(velocityBase: CGFloat, baseLocation: CGPoint, touchLocation: CGPoint) -> CGVector {
@@ -554,6 +607,7 @@ class GameScene: SKScene {
         otaku.alpha = 0.3;
         otaku.removeAllActions();
         otaku.removeAllChildren();
+        otaku.physicsBody?.categoryBitMask = 0;
         otaku.physicsBody = nil;
         otaku.zPosition = ZCtrl.otakuHevened.rawValue;
         //otaku.removeFromParent();
@@ -695,5 +749,58 @@ class GameScene: SKScene {
             // パーティクルの位置を更新
             otaku.updateAllParticle();
         }
-    }    
+    }
+    
+    func didBeginContact(contact: SKPhysicsContact) {
+     
+        var idolBody, otakuBody: SKPhysicsBody!;
+        
+        if contact.bodyA.categoryBitMask == idol_collision_category && contact.bodyB.categoryBitMask == otaku_collision_category
+        {
+            idolBody = contact.bodyA;
+            otakuBody = contact.bodyB;
+            if let idol = idolBody.node {
+                if let otaku = otakuBody.node {
+                    idolFearStart(idol as! IdolBase, otaku: otaku as! OtakuBase, speech: true);
+                }
+            }
+        }
+        else if contact.bodyB.categoryBitMask == idol_collision_category && contact.bodyA.categoryBitMask == otaku_collision_category
+        {
+            idolBody = contact.bodyB;
+            otakuBody = contact.bodyA;
+            if let idol = idolBody.node {
+                if let otaku = otakuBody.node {
+                    idolFearStart(idol as! IdolBase, otaku: otaku as! OtakuBase, speech: true);
+                }
+            }
+        }
+        
+    }
+
+    func didEndContact(contact: SKPhysicsContact) {
+        var idolBody, otakuBody: SKPhysicsBody!;
+        
+        if contact.bodyA.categoryBitMask == idol_collision_category && contact.bodyB.categoryBitMask == otaku_collision_category
+        {
+            idolBody = contact.bodyA;
+            otakuBody = contact.bodyB;
+            if let idol = idolBody.node {
+                if let otaku = otakuBody.node {
+                    idolFearEnd(idol as! IdolBase, otaku: otaku as! OtakuBase, speech: false);
+                }
+            }
+        }
+        else if contact.bodyB.categoryBitMask == idol_collision_category && contact.bodyA.categoryBitMask == otaku_collision_category
+        {
+            idolBody = contact.bodyB;
+            otakuBody = contact.bodyA;
+            if let idol = idolBody.node {
+                if let otaku = otakuBody.node {
+                    idolFearEnd(idol as! IdolBase, otaku: otaku as! OtakuBase, speech: false);
+                }
+            }
+        }
+    }
+    
 }
