@@ -2,8 +2,12 @@ import SpriteKit
 
 class IdolBase : SKSpriteNode {
     
+    // 熱中度関連
+    var passion: UInt32 = 1000;
+
+    // 恐怖度関連
     var fear: UInt32 = 0;
-    var fearOverFlowLimit: UInt32 = 1000;
+    var isFearAction: Bool = false;
 
     var moveTargetIndex: UInt32 = 0;
     var isMoving: Bool = false;
@@ -26,7 +30,7 @@ class IdolBase : SKSpriteNode {
     var isQuited: Bool = false;
     
     func isQuit() -> Bool {
-        if(fear > fearOverFlowLimit)
+        if(fear > passion)
         {
             isQuited = true;
             return true;
@@ -34,8 +38,43 @@ class IdolBase : SKSpriteNode {
         return false;
     }
     
+    func runDefaultAction() {
+        let rot1 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
+        let stay1 = SKAction.waitForDuration(0.4);
+        let rot2 = SKAction.rotateByAngle(CGFloat(-(M_PI*0.05*2)), duration:0.1)
+        let stay2 = SKAction.waitForDuration(0.4);
+        let rot3 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
+        let seq = SKAction.sequence([rot1, stay1, rot2, stay2, rot3]);
+        
+        self.runAction(SKAction.repeatActionForever(seq));
+    }
+    
     func addFear(value: UInt32) {
         fear += value;
+        addFearAction();
+    }
+    
+    func addFearAction() {
+        
+        if(isFearAction)
+        {
+            return;
+        }
+        isFearAction = true;
+
+        self.color = UIColor.redColor();
+        self.colorBlendFactor = 0.7;
+        var selfActions: [SKAction] = [];
+        for i in 0 ..< 4 {
+            selfActions.append(SKAction.fadeAlphaTo((i%2==0) ? 0.3 : 1.0, duration: 0.05));
+        }
+        selfActions.append(SKAction.runBlock({ () -> Void in
+            self.alpha = 1.0;
+            self.color = UIColor.clearColor();
+            self.colorBlendFactor = 0.0;
+            self.isFearAction = false;
+        }));
+        self.runAction(SKAction.sequence(selfActions));
     }
     
     func runSpeech(text: String

@@ -338,15 +338,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //どのカテゴリのノードと衝突した場合に、反射運動させるかを示すフラグ
             idol.physicsBody?.collisionBitMask = otaku_collision_category;
             
-            let rot1 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
-            let stay1 = SKAction.waitForDuration(0.4);
-            let rot2 = SKAction.rotateByAngle(CGFloat(-(M_PI*0.05*2)), duration:0.1)
-            let stay2 = SKAction.waitForDuration(0.4);
-            let rot3 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
-            let seq = SKAction.sequence([rot1, stay1, rot2, stay2, rot3]);
-            
-            idol.runAction(SKAction.repeatActionForever(seq));
-            
+            idol.runDefaultAction();
+                        
             self.addChild(idol);
             
             idol_list.append(idol);
@@ -569,14 +562,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //どのカテゴリのノードと衝突した場合に、反射運動させるかを示すフラグ
         otaku.physicsBody?.collisionBitMask = idol_collision_category | otaku_collision_category;
         
-        let rot1 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
-        let stay1 = SKAction.waitForDuration(0.4);
-        let rot2 = SKAction.rotateByAngle(CGFloat(-(M_PI*0.05*2)), duration:0.1)
-        let stay2 = SKAction.waitForDuration(0.4);
-        let rot3 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
-        let seq = SKAction.sequence([rot1, stay1, rot2, stay2, rot3]);
-        
-        otaku.runAction(SKAction.repeatActionForever(seq));
+        otaku.runDefaultAction();
         
         self.addChild(otaku);
         

@@ -343,4 +343,15 @@ class OtakuBase : SKSpriteNode {
             line.runAction(actionLine);
         }
     }
+    
+    func runDefaultAction() {
+        let rot1 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
+        let stay1 = SKAction.waitForDuration(0.4);
+        let rot2 = SKAction.rotateByAngle(CGFloat(-(M_PI*0.05*2)), duration:0.1)
+        let stay2 = SKAction.waitForDuration(0.4);
+        let rot3 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
+        let seq = SKAction.sequence([rot1, stay1, rot2, stay2, rot3]);
+        
+        self.runAction(SKAction.repeatActionForever(seq));
+    }
 }
