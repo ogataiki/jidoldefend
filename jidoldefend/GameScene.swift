@@ -2,6 +2,17 @@ import SpriteKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
+    enum Status: Int {
+        case game = 0
+        case gameStart
+        case gameOver
+        case otakuGoHevenEffectStart
+        case otakuGoHevenEffecting
+        case idolQuitEffectStart
+        case idolQuitEffecting
+    }
+    var status: Status = Status.game;
+    
     var isTouch: Bool = false;
     var touchLocation: CGPoint = CGPointMake(0, 0);
     
@@ -17,6 +28,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     enum ZCtrl: CGFloat {
         case touchEffect = 10
+        case otakuHevenedEffect = 9
         case idol = 0
         case otakuGrowPassion = -1
         case otakuDownPassion = -2
@@ -108,6 +120,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     
+    var back: SKSpriteNode!;
+    
     let velocity_max: CGFloat = 50.0;
     let idol_velocity: CGFloat = 100.0;
     let otaku_touch_velocity: CGFloat = 100.0;
@@ -121,6 +135,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var otaku_list: [OtakuBase] = [];
     var otaku_active_map = Dictionary<String,OtakuBase>();
+    var otaku_hevened_map = Dictionary<String,OtakuBase>();
     var otaku_last_add_date: NSDate = NSDate();
     var otaku_add_interval: Int = 3;
     let otaku_collision_category: UInt32 = 0x00000002;
@@ -131,6 +146,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var gameFrame = CGRectZero;
     
+    var physicsWorldSpeed: CGFloat = 0;
+    
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         
@@ -138,6 +155,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         view.ignoresSiblingOrder = false;
         
         self.physicsWorld.contactDelegate = self;
+        physicsWorldSpeed = self.physicsWorld.speed;
         
         gameFrame = CGRectMake(self.frame.origin.x
             , self.frame.origin.y + self.frame.size.height*0.15
@@ -146,7 +164,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         self.physicsBody = SKPhysicsBody(edgeLoopFromRect: gameFrame);
         
-        let back = SKSpriteNode(imageNamed: "back");
+        back = SKSpriteNode(imageNamed: "back");
         back.position = view.center;
         let widthdiff = gameFrame.size.width - back.size.width;
         let heightdiff = gameFrame.size.height - back.size.height;
@@ -258,6 +276,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
         
+        switch status {
+        case Status.game:
+            updateGame();
+        case Status.gameStart:
+            updateGameStart();
+        case Status.gameOver:
+            updateGameOver();
+        case Status.otakuGoHevenEffectStart:
+            updateOtakuGoHevenEffects();
+        case Status.idolQuitEffectStart:
+            updateIdolQuitEffects();
+        default:
+            break;
+        }
+    }
+
+    func updateGame() {
+        
         let date_now = NSDate();
         let calendar = NSCalendar.currentCalendar()
         var comp: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitNanosecond
@@ -295,6 +331,71 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
 
+    func updateGameStart() {
+        
+    }
+    
+    func updateGameOver() {
+        
+    }
+    
+    func updateOtakuGoHevenEffects() {
+
+        self.status = Status.otakuGoHevenEffecting;
+        
+        allObjectPaused();
+        
+        back.color = UIColor.blackColor();
+        back.colorBlendFactor = 0.5;
+        
+        let otakuKeys = otaku_hevened_map.keys;
+        for key in otakuKeys {
+            let otaku = otaku_hevened_map[key];
+            otaku!.runHevenEffect(idol_list[otaku!.targetIdol].position, target: self, z: ZCtrl.otakuHevenedEffect.rawValue);
+        }
+        
+        self.runAction(SKAction.sequence([
+            SKAction.waitForDuration(0.5),
+            SKAction.runBlock({ () -> Void in
+                self.allObjectStart();
+                self.back.color = UIColor.clearColor();
+                self.back.colorBlendFactor = 0.0;
+                self.status = Status.game;
+            })
+            ]));
+    }
+    
+    func updateIdolQuitEffects() {
+        
+    }
+    
+    func allObjectPaused() {
+        
+        physicsWorldSpeed = self.physicsWorld.speed;
+        self.physicsWorld.speed = 0.0;
+        
+        for idol in idol_list {
+            idol.paused = true;
+        }
+        let otakuKeys = otaku_active_map.keys;
+        for key in otakuKeys {
+            let otaku = otaku_active_map[key]!;
+            otaku.paused = true;
+        }
+    }
+    func allObjectStart() {
+        
+        self.physicsWorld.speed = physicsWorldSpeed;
+        
+        for idol in idol_list {
+            idol.paused = false;
+        }
+        let otakuKeys = otaku_active_map.keys;
+        for key in otakuKeys {
+            let otaku = otaku_active_map[key]!;
+            otaku.paused = false;
+        }
+    }
 
     func idolMoveSetting() {
         
@@ -358,6 +459,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     , action: IdolBase.SpeechAction.normal
                     , frame: 90
                     , target: self, z: ZCtrl.speech.rawValue)
+                idol.addFearAction();
             }
         case otaku_name.bad.rawValue:
             if speech {
@@ -366,6 +468,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     , action: IdolBase.SpeechAction.normal
                     , frame: 90
                     , target: self, z: ZCtrl.speech.rawValue)
+                idol.addFearAction();
             }
         default:
             // その他は恐怖を感じない
@@ -587,6 +690,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             , target: self, z: ZCtrl.speech.rawValue)
 
         otaku_hevened_count++;
+        
+        otaku_hevened_map[otaku.tag] = otaku;
 
         otaku.removeAllPaticle();
 
@@ -599,6 +704,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //otaku.removeFromParent();
         otaku_active_map[otaku.tag] = nil;
         
+        self.status = Status.otakuGoHevenEffectStart;
     }
     func otakuGoHome(otaku: OtakuBase) {
         

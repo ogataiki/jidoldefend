@@ -39,6 +39,7 @@ class IdolBase : SKSpriteNode {
     }
     
     func runDefaultAction() {
+        
         let rot1 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
         let stay1 = SKAction.waitForDuration(0.4);
         let rot2 = SKAction.rotateByAngle(CGFloat(-(M_PI*0.05*2)), duration:0.1)
@@ -51,7 +52,6 @@ class IdolBase : SKSpriteNode {
     
     func addFear(value: UInt32) {
         fear += value;
-        addFearAction();
     }
     
     func addFearAction() {
@@ -60,8 +60,10 @@ class IdolBase : SKSpriteNode {
         {
             return;
         }
+        self.removeAllActions();
+        
         isFearAction = true;
-
+        
         self.color = UIColor.redColor();
         self.colorBlendFactor = 0.7;
         var selfActions: [SKAction] = [];
@@ -72,7 +74,9 @@ class IdolBase : SKSpriteNode {
             self.alpha = 1.0;
             self.color = UIColor.clearColor();
             self.colorBlendFactor = 0.0;
+            self.zRotation = 0;
             self.isFearAction = false;
+            self.runDefaultAction();
         }));
         self.runAction(SKAction.sequence(selfActions));
     }
@@ -138,5 +142,19 @@ class IdolBase : SKSpriteNode {
         seqActions.append(endfunc);
         let seq = SKAction.sequence(seqActions);
         speech.runAction(seq);
+    }
+    
+    override func removeAllActions() {
+        
+        if(isFearAction)
+        {
+            self.alpha = 1.0;
+            self.color = UIColor.clearColor();
+            self.colorBlendFactor = 0.0;
+            self.zRotation = 0;
+            self.isFearAction = false;
+        }
+
+        super.removeAllActions();
     }
 }
