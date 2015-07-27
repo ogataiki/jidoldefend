@@ -81,12 +81,70 @@ class IdolBase : SKSpriteNode {
         self.runAction(SKAction.sequence(selfActions));
     }
     
+    func addGrowAction() {
+        
+        self.removeAllActions();
+        
+        self.color = UIColor.yellowColor();
+        self.colorBlendFactor = 0.7;
+        var selfActions: [SKAction] = [];
+        for i in 0 ..< 4 {
+            selfActions.append(SKAction.fadeAlphaTo((i%2==0) ? 0.3 : 1.0, duration: 0.05));
+        }
+        selfActions.append(SKAction.runBlock({ () -> Void in
+            self.alpha = 1.0;
+            self.color = UIColor.clearColor();
+            self.colorBlendFactor = 0.0;
+            self.zRotation = 0;
+            self.runDefaultAction();
+        }));
+        self.runAction(SKAction.sequence(selfActions));
+        
+        for i in 0 ... 10 {
+            let line = SKSpriteNode(imageNamed: "sparkline.png");
+            line.blendMode = SKBlendMode.Add;
+            line.color = UIColor.yellowColor();
+            line.colorBlendFactor = 1.0;
+            line.xScale = 0.5;
+            line.yScale = 0.1;
+            line.alpha = 0.0;
+            line.zPosition = self.zPosition;
+            let pr = CGFloat(1 + (arc4random() % 10)) * 0.1;
+            line.position = CGPointMake(self.position.x - self.size.width*0.5 + self.size.width*pr, self.position.y - self.size.height*0.5);
+            line.anchorPoint = CGPointMake(0.5, 0.05);
+            if let parent = self.parent {
+                parent.addChild(line);
+            }
+            
+            let r = NSTimeInterval(1 + arc4random() % 5);
+            var wait = SKAction.waitForDuration(r * 0.1);
+            
+            var disp = SKAction.runBlock({ () -> Void in
+                line.alpha = 1.0;
+            });
+            
+            var grow = SKAction.group([
+                SKAction.scaleXTo(0.1, duration: 0.1),
+                SKAction.scaleYTo(2.0, duration: 0.2),
+                SKAction.fadeAlphaTo(0, duration: 0.2)
+                ]);
+            
+            var endLine = SKAction.runBlock { () -> Void in
+                line.removeFromParent();
+            }
+            var actionLine = SKAction.sequence([wait, disp, grow, endLine]);
+            line.runAction(actionLine);
+        }
+    }
+
+    
     func runSpeech(text: String
         , balloon: SpeechBalloon
         , action: SpeechAction
         , frame: Int
         , target: SKScene
-        , z: CGFloat)
+        , z: CGFloat
+        , back: SKSpriteNode)
     {
         let speech = SpeechBase(imageNamed: balloon.rawValue);
         // 基本はキャラの左上に表示
@@ -99,7 +157,7 @@ class IdolBase : SKSpriteNode {
             speech.position.x = self.position.x + speech.size.width*widthoffset;
             speech.xScale = -1.0;
         }
-        if(speech.position.y + speech.size.height*0.5 > target.frame.origin.y + target.size.height) {
+        if(speech.position.y + speech.size.height*0.5 > target.frame.origin.y + back.size.height) {
             // 上が見切れる場合は下側に表示
             speech.position.y = self.position.y - speech.size.height*heightoffset;
             speech.yScale = -1.0;

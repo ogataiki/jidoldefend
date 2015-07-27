@@ -20,6 +20,8 @@
 		506772F41B4A567B00AF3C41 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 506772F31B4A567B00AF3C41 /* Images.xcassets */; };
 		506772F71B4A567B00AF3C41 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 506772F51B4A567B00AF3C41 /* LaunchScreen.xib */; };
 		506773031B4A567B00AF3C41 /* jidoldefendTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506773021B4A567B00AF3C41 /* jidoldefendTests.swift */; };
+		50CE777C1B65B045009F290B /* SKActionEx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CE777B1B65B045009F290B /* SKActionEx.swift */; };
+		50CE777E1B65B442009F290B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50CE777D1B65B442009F290B /* AudioToolbox.framework */; };
 		50D482EC1B4C96BE0072DF94 /* IdolBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D482EB1B4C96BE0072DF94 /* IdolBase.swift */; };
 		50D482EE1B4C97BA0072DF94 /* OtakuBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D482ED1B4C97BA0072DF94 /* OtakuBase.swift */; };
 		50D482F11B4CC2A00072DF94 /* PassionFire.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50D482EF1B4CC2A00072DF94 /* PassionFire.sks */; };
@@ -54,6 +56,8 @@
 		506772FC1B4A567B00AF3C41 /* jidoldefendTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = jidoldefendTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		506773011B4A567B00AF3C41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		506773021B4A567B00AF3C41 /* jidoldefendTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = jidoldefendTests.swift; sourceTree = "<group>"; };
+		50CE777B1B65B045009F290B /* SKActionEx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKActionEx.swift; sourceTree = "<group>"; };
+		50CE777D1B65B442009F290B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		50D482EB1B4C96BE0072DF94 /* IdolBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdolBase.swift; sourceTree = "<group>"; };
 		50D482ED1B4C97BA0072DF94 /* OtakuBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtakuBase.swift; sourceTree = "<group>"; };
 		50D482EF1B4CC2A00072DF94 /* PassionFire.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = PassionFire.sks; sourceTree = "<group>"; };
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50CE777E1B65B442009F290B /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +89,7 @@
 				506772E51B4A567B00AF3C41 /* jidoldefend */,
 				506772FF1B4A567B00AF3C41 /* jidoldefendTests */,
 				506772E41B4A567B00AF3C41 /* Products */,
+				50CE777F1B65B449009F290B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -106,6 +112,7 @@
 				50D482EB1B4C96BE0072DF94 /* IdolBase.swift */,
 				50D482ED1B4C97BA0072DF94 /* OtakuBase.swift */,
 				506446A21B5394CC00003578 /* SpeechBase.swift */,
+				50CE777B1B65B045009F290B /* SKActionEx.swift */,
 				506772F01B4A567B00AF3C41 /* Main.storyboard */,
 				506772F31B4A567B00AF3C41 /* Images.xcassets */,
 				506772F51B4A567B00AF3C41 /* LaunchScreen.xib */,
@@ -143,6 +150,14 @@
 				506773011B4A567B00AF3C41 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		50CE777F1B65B449009F290B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				50CE777D1B65B442009F290B /* AudioToolbox.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,6 +267,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50CE777C1B65B045009F290B /* SKActionEx.swift in Sources */,
 				50D482EE1B4C97BA0072DF94 /* OtakuBase.swift in Sources */,
 				50D482EC1B4C96BE0072DF94 /* IdolBase.swift in Sources */,
 				506772ED1B4A567B00AF3C41 /* GameScene.swift in Sources */,

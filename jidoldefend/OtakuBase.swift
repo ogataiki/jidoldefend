@@ -18,6 +18,13 @@ class OtakuBase : SKSpriteNode {
     var newAddCount: UInt32 = 0;
     var newAddCountLImit: UInt32 = 1 + (arc4random()%20);
     
+    // オタクAIパターン
+    enum AI: Int {
+        case approach = 0
+        case away = 1
+    }
+    var aiPattern: AI = AI.approach;
+    
     // 推しメン
     var targetIdol: Int = Int(arc4random() % 2);
     
@@ -42,6 +49,7 @@ class OtakuBase : SKSpriteNode {
     }
     
     var isHevened: Bool = false;
+    var isHevenedEffect: Bool = false;
 
     func addPassion(value: Int) {
         let date_now = NSDate();
@@ -255,7 +263,8 @@ class OtakuBase : SKSpriteNode {
         , action: SpeechAction
         , frame: Int
         , target: SKScene
-        , z: CGFloat)
+        , z: CGFloat
+        , back: SKSpriteNode)
     {
         let speech = SpeechBase(imageNamed: balloon.rawValue);
         // 基本はキャラの左上に表示
@@ -268,7 +277,7 @@ class OtakuBase : SKSpriteNode {
             speech.position.x = self.position.x + speech.size.width*widthoffset;
             speech.xScale = -1.0;
         }
-        if(speech.position.y + speech.size.height*0.5 > target.frame.origin.y + target.size.height) {
+        if(speech.position.y + speech.size.height*0.5 > target.frame.origin.y + back.size.height) {
             // 上が見切れる場合は下側に表示
             speech.position.y = self.position.y - speech.size.height*heightoffset;
             speech.yScale = -1.0;
@@ -312,34 +321,76 @@ class OtakuBase : SKSpriteNode {
         let seq = SKAction.sequence(seqActions);
         speech.runAction(seq);
     }
-
-    func runHevenEffect(idolPos: CGPoint, target: SKScene, z: CGFloat) {
+    
+    func runHevenEffect(idolPos: CGPoint, target: SKScene, z: CGFloat, callback: (Int) -> Void) {
         
         let lightBall = SKSpriteNode(imageNamed: "spark.png");
         lightBall.blendMode = SKBlendMode.Add;
         lightBall.color = UIColor.yellowColor();
+        lightBall.colorBlendFactor = 1.0;
         lightBall.zPosition = z;
+        lightBall.xScale = 1.5;
+        lightBall.yScale = 1.5;
+        lightBall.position = self.position;
         target.addChild(lightBall);
         
-        var groupBall = SKAction.group([
+        var face = SKSpriteNode(imageNamed: self.name!);
+        face.blendMode = SKBlendMode.Add;
+        face.color = UIColor.yellowColor();
+        face.colorBlendFactor = 1.0;
+        face.xScale = self.xScale;
+        face.yScale = self.yScale;
+        face.zPosition = 0;
+        lightBall.addChild(face);
+
+        var flashingBall = SKAction.sequence([
+            SKAction.fadeAlphaTo(0.3, duration: 0.1),
+            SKAction.fadeAlphaTo(1.0, duration: 0.1),
+            SKAction.fadeAlphaTo(0.3, duration: 0.1),
+            SKAction.fadeAlphaTo(1.0, duration: 0.1)
             ]);
+        var jumpBall = SKActionEx.jumpTo(lightBall
+            , targetPoint: idolPos
+            , height: target.size.height - self.position.y
+            , duration: 0.5);
         var endBall = SKAction.runBlock { () -> Void in
             lightBall.removeFromParent();
+            callback(self.targetIdol);
         }
-        var actionBall = SKAction.sequence([endBall]);
+        var actionBall = SKAction.sequence([flashingBall, jumpBall, endBall]);
         lightBall.runAction(actionBall);
         
         for i in 0 ... 10 {
             let line = SKSpriteNode(imageNamed: "sparkline.png");
             line.blendMode = SKBlendMode.Add;
             line.color = UIColor.yellowColor();
+            line.colorBlendFactor = 1.0;
+            line.xScale = 0.5;
+            line.yScale = 0.1;
+            line.alpha = 0.0;
             line.zPosition = z;
+            let pr = CGFloat(1 + (arc4random() % 10)) * 0.1;
+            line.position = CGPointMake(self.position.x - self.size.width*0.5 + self.size.width*pr, self.position.y - self.size.height*0.5);
+            line.anchorPoint = CGPointMake(0.5, 0.05);
             target.addChild(line);
+            
+            let r = NSTimeInterval(1 + arc4random() % 5);
+            var wait = SKAction.waitForDuration(r * 0.1);
+
+            var disp = SKAction.runBlock({ () -> Void in
+                line.alpha = 1.0;
+            });
+
+            var grow = SKAction.group([
+                SKAction.scaleXTo(0.1, duration: 0.1),
+                SKAction.scaleYTo(2.0, duration: 0.2),
+                SKAction.fadeAlphaTo(0, duration: 0.2)
+                ]);
             
             var endLine = SKAction.runBlock { () -> Void in
                 line.removeFromParent();
             }
-            var actionLine = SKAction.sequence([endLine]);
+            var actionLine = SKAction.sequence([wait, disp, grow, endLine]);
             line.runAction(actionLine);
         }
     }
