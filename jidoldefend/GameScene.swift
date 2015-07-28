@@ -9,6 +9,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case gameOver
         case otakuGoHevenEffectStart
         case otakuGoHevenEffecting
+        case otakuGoHomeEffectStart
+        case otakuGoHomeEffecting
         case idolQuitEffectStart
         case idolQuitEffecting
     }
@@ -25,18 +27,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case core = "otaku_core"
         case bad = "otaku_bad"
     }
+    func getOtakuNameJP(otakuName: String) -> String {
+        switch otakuName {
+        case otaku_name.normal.rawValue:
+            return "オタク";
+        case otaku_name.core.rawValue:
+            return "天パオタク";
+        case otaku_name.bad.rawValue:
+            return "メガネオタク";
+        default:
+            return "";
+        }
+    }
     
     enum ZCtrl: CGFloat {
         case touchEffect = 10
-        case otakuHevenedEffect = 1
+        case otakuHevenedEffect = 2
+        case otakuGoHomeEffect = 1
         case idol = 0
         case otakuHevenedSpeech = -1
-        case effectBackBlack = -2
-        case otakuGrowPassion = -3
-        case otakuDownPassion = -4
-        case otaku = -5
-        case otakuPassionFire = -6
-        case speech = -7
+        case otakuGoHomeSpeech = -2
+        case effectBackBlack = -3
+        case otakuGrowPassion = -4
+        case otakuDownPassion = -5
+        case otaku = -6
+        case otakuPassionFire = -7
+        case speech = -8
         case otakuHevened = -9
         case back = -10
     }
@@ -123,6 +139,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     
     var back: SKSpriteNode!;
+    var logLabel: [SKLabelNode] = [];
     
     let velocity_max: CGFloat = 50.0;
     let idol_velocity: CGFloat = 100.0;
@@ -139,15 +156,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var otaku_active_map = Dictionary<String,OtakuBase>();
     var otaku_hevened_map = Dictionary<String,OtakuBase>();
     var otaku_hevenEffect_map = Dictionary<String,OtakuBase>();
+    var otaku_gohome_map = Dictionary<String,OtakuBase>();
+    var otaku_goHomeEffect_map = Dictionary<String,OtakuBase>();
     var otaku_last_add_date: NSDate = NSDate();
     var otaku_add_interval: Int = 3;
     let otaku_collision_category: UInt32 = 0x00000002;
     var otaku_add_positions: [CGPoint] = [];
-    var otaku_hevened_count: UInt = 0;
     
     var touchEffect: SKSpriteNode!;
     
     var gameFrame = CGRectZero;
+    
+    var gameLog: [String] = [];
     
     var physicsWorldSpeed: CGFloat = 0;
     
@@ -185,6 +205,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         back.zPosition = ZCtrl.back.rawValue;
         self.addChild(back);
+        
+        let logCount: Int = 4;
+        for i in 0 ..< logCount {
+            logLabel.append(SKLabelNode());
+            logLabel[i].fontSize = 12;
+            logLabel[i].horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left;
+            logLabel[i].verticalAlignmentMode = SKLabelVerticalAlignmentMode.Bottom;
+            logLabel[i].position = CGPointMake(0, ((gameFrame.origin.y / CGFloat(logCount+1)) * CGFloat(logCount-i-1)));
+            self.addChild(logLabel[i]);
+        }
 
         generateIdol();
         
@@ -288,6 +318,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             updateGameOver();
         case Status.otakuGoHevenEffectStart:
             updateOtakuGoHevenEffects();
+        case Status.otakuGoHomeEffectStart:
+            updateOtakuGoHomeEffects();
         case Status.idolQuitEffectStart:
             updateIdolQuitEffects();
         default:
@@ -346,16 +378,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         self.status = Status.otakuGoHevenEffecting;
         
-        allObjectPaused();
+        //allObjectPaused();
         
         let effectBack = SKSpriteNode(color: UIColor.blackColor(), size: back.size);
         effectBack.alpha = 0.7;
         effectBack.position = back.position;
         effectBack.zPosition = ZCtrl.effectBackBlack.rawValue;
         self.addChild(effectBack);
-        
-        //back.color = UIColor.blackColor();
-        //back.colorBlendFactor = 0.5;
         
         let otakuKeys = otaku_hevenEffect_map.keys;
         for key in otakuKeys {
@@ -378,16 +407,61 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             SKAction.fadeAlphaTo(0.0, duration: 0.1),
             SKAction.runBlock({ () -> Void in
                 effectBack.removeFromParent();
-                self.allObjectStart();
-                //self.back.color = UIColor.clearColor();
-                //self.back.colorBlendFactor = 0.0;
+                //self.allObjectStart();
                 self.status = Status.game;
             })
             ]));
     }
     func otakuGoHevenEffectCallback(idolIndex: Int) {
+        idol_list[idolIndex].addPassion(3);
         idol_list[idolIndex].addGrowAction();
+        updateGameLog(log: "アイドルはオタクの応援でやる気がアップ！");
     }
+    
+    func updateOtakuGoHomeEffects() {
+        
+        self.status = Status.otakuGoHomeEffecting;
+        
+        allObjectPaused();
+        
+        let effectBack = SKSpriteNode(color: UIColor.blackColor(), size: back.size);
+        effectBack.alpha = 0.7;
+        effectBack.position = back.position;
+        effectBack.zPosition = ZCtrl.effectBackBlack.rawValue;
+        self.addChild(effectBack);
+        
+        let otakuKeys = otaku_goHomeEffect_map.keys;
+        for key in otakuKeys {
+            let otaku = otaku_goHomeEffect_map[key];
+            if otaku!.isHomeEffect == false {
+                //バイブレーション　うざいので一旦止める
+                //AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate));
+                
+                otaku!.runHomeEffect(idol_list[otaku!.targetIdol].position
+                    , target: self
+                    , z: ZCtrl.otakuGoHomeEffect.rawValue
+                    , callback: otakuGoHomeEffectCallback);
+                otaku!.isHomeEffect = true;
+                otaku_goHomeEffect_map[key] = nil;
+            }
+        }
+        
+        effectBack.runAction(SKAction.sequence([
+            SKAction.waitForDuration(0.5),
+            SKAction.fadeAlphaTo(0.0, duration: 0.1),
+            SKAction.runBlock({ () -> Void in
+                effectBack.removeFromParent();
+                self.allObjectStart();
+                self.status = Status.game;
+            })
+            ]));
+    }
+    func otakuGoHomeEffectCallback(idolIndex: Int) {
+        idol_list[idolIndex].addFear(10);
+        idol_list[idolIndex].addFearAction();
+        updateGameLog(log: "アイドルはオタクの心無い言葉に傷ついた。");
+    }
+
     
     func updateIdolQuitEffects() {
         
@@ -437,11 +511,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func generateIdol() {
         
-        for i in 0 ... 1 {
+        let positions: [CGPoint] = [
+            self.view!.center,
+            CGPointMake((self.view!.center.x - gameFrame.size.width*0.15), self.view!.center.y),
+            CGPointMake((self.view!.center.x - gameFrame.size.width*0.15) + (gameFrame.size.width*0.30), self.view!.center.y)
+        ];
+
+        for i in 0 ..< 1 {
             var idol = IdolBase(imageNamed:"idol_normal");
             idol.name = "idol";
-            idol.position = CGPointMake((self.view!.center.x - gameFrame.size.width*0.15) + ((gameFrame.size.width*0.30) * CGFloat(i))
-                , self.view!.center.y);
+            idol.position = positions[i];
             idol.xScale = 0.5;
             idol.yScale = 0.5;
             idol.anchorPoint = CGPointMake(0.5, 0.5);
@@ -470,6 +549,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.addChild(idol);
             
             idol_list.append(idol);
+            
+            switch idol.name! {
+            case "idol":
+                updateGameLog(log: "アイドルを目指す少女のアイドル活動が始まった。");
+            default:
+                break;
+            }
         }
     }
     
@@ -480,7 +566,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         switch otaku.name! {
         case otaku_name.core.rawValue:
             if speech {
-                idol.runSpeech("天パキモッ！"
+                let speech = "天パキモッ！";
+                idol.runSpeech(speech
                     , balloon: IdolBase.SpeechBalloon.normal
                     , action: IdolBase.SpeechAction.normal
                     , frame: 90
@@ -490,7 +577,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         case otaku_name.bad.rawValue:
             if speech {
-                idol.runSpeech("メガネウザッ！"
+                let speech = "メガネウザッ！";
+                idol.runSpeech(speech
                     , balloon: IdolBase.SpeechBalloon.normal
                     , action: IdolBase.SpeechAction.normal
                     , frame: 90
@@ -514,9 +602,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let otaku = idol.contactOtakus[key]!;
             switch otaku.name! {
             case otaku_name.core.rawValue:
-                idol.addFear(1);
+                let fear: UInt32 = 1;
+                idol.addFear(fear);
+                updateGameLog(log: "アイドルは\(getOtakuNameJP(otaku.name!))に触られ吐き気がした。");
             case otaku_name.bad.rawValue:
-                idol.addFear(2);
+                let fear: UInt32 = 2;
+                idol.addFear(fear);
+                updateGameLog(log: "アイドルは\(getOtakuNameJP(otaku.name!))に触られ嫌悪感を感じた。");
             default:
                 // その他は恐怖を感じない
                 break;
@@ -531,7 +623,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let target = idol_move_targets[Int(idol.moveTargetIndex)];
             
             var moveSeed: CGFloat = 0.002;
-            moveSeed = moveSeed + (CGFloat(otaku_hevened_count) * 0.0001);
             
             // 移動
             if abs(target.x - idol.position.x) < abs(idol.moveVector.width*moveSeed) {
@@ -639,8 +730,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 , baseLocation: otaku.position
                 , touchLocation: location);
             
-            addVelocity.dx = min(addVelocity.dx, velocity_max) * 0.3;
-            addVelocity.dy = min(addVelocity.dy, velocity_max) * 0.3;
+            addVelocity.dx = min(addVelocity.dx, velocity_max) * 0.5;
+            addVelocity.dy = min(addVelocity.dy, velocity_max) * 0.5;
             otaku.physicsBody?.applyForce(addVelocity);
         }
     }
@@ -716,15 +807,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func otakuGoHeven(otaku: OtakuBase) {
         
-        otaku.runSpeech(otakuGoHevenSpeechGet(otaku.name!)
+        let speech = otakuGoHevenSpeechGet(otaku.name!);
+        otaku.runSpeech(speech
             , balloon: OtakuBase.SpeechBalloon.powerful
             , action: OtakuBase.SpeechAction.powerful
             , frame: 90
             , target: self, z: ZCtrl.otakuHevenedSpeech.rawValue
             , back: back)
 
-        otaku_hevened_count++;
-        
         otaku_hevened_map[otaku.tag] = otaku;
         otaku_hevenEffect_map[otaku.tag] = otaku;
         
@@ -739,16 +829,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //otaku.removeFromParent();
         otaku_active_map[otaku.tag] = nil;
         
+        updateGameLog(log: "\(getOtakuNameJP(otaku.name!))はアイドルの魅力に昇天した！");
+
         self.status = Status.otakuGoHevenEffectStart;
     }
     func otakuGoHome(otaku: OtakuBase) {
         
-        otaku.runSpeech(otakuGoHomeSpeechGet(otaku.name!)
+        let speech = otakuGoHomeSpeechGet(otaku.name!);
+        otaku.runSpeech(speech
             , balloon: OtakuBase.SpeechBalloon.rect
             , action: OtakuBase.SpeechAction.normal
             , frame: 90
-            , target: self, z: ZCtrl.speech.rawValue
+            , target: self, z: ZCtrl.otakuGoHomeSpeech.rawValue
             , back: back)
+        
+        otaku_gohome_map[otaku.tag] = otaku;
+        otaku_goHomeEffect_map[otaku.tag] = otaku;
         
         otaku.removeAllPaticle();
 
@@ -756,7 +852,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         otaku.removeAllChildren();
         otaku.physicsBody = nil;
         otaku.removeFromParent();
-        otaku_active_map[otaku.tag] = nil;        
+        otaku_active_map[otaku.tag] = nil;
+        
+        updateGameLog(log: "\(getOtakuNameJP(otaku.name!))はテンションが上がらず帰宅した。");
+
+        self.status = Status.otakuGoHomeEffectStart;
     }
     
     func updateOtaku() {
@@ -887,6 +987,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             otaku.updateAllParticle();
         }
     }
+    
+    func updateGameLog(log: String = "") {
+        if log != "" {
+            gameLog.append(log);
+        }
+        
+        // 表示更新
+        for i in 1 ... logLabel.count {
+            if i <= gameLog.count {
+                logLabel[i-1].text = gameLog[gameLog.count-i];
+            }
+        }
+    }
+    
+    //
+    // 衝突デリゲート
+    //
     
     func didBeginContact(contact: SKPhysicsContact) {
      

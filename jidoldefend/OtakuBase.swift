@@ -26,12 +26,14 @@ class OtakuBase : SKSpriteNode {
     var aiPattern: AI = AI.approach;
     
     // 推しメン
-    var targetIdol: Int = Int(arc4random() % 2);
+    // アイドル数が複数の場合はこれに設定する
+    var targetIdol: Int = 0;
     
     // 帰宅関連
     var goHomeInterval: UInt32 = 7;
     var goHomeBaseDate: NSDate = NSDate();
     var isHome: Bool = false;
+    var isHomeEffect: Bool = false;
     
     // パーティクル
     var passionFireParticle: SKEmitterNode!;
@@ -394,7 +396,80 @@ class OtakuBase : SKSpriteNode {
             line.runAction(actionLine);
         }
     }
-    
+  
+    func runHomeEffect(idolPos: CGPoint, target: SKScene, z: CGFloat, callback: (Int) -> Void) {
+        
+        let lightBall = SKSpriteNode(imageNamed: "spark.png");
+        lightBall.blendMode = SKBlendMode.Add;
+        lightBall.color = UIColor.blueColor();
+        lightBall.colorBlendFactor = 1.0;
+        lightBall.zPosition = z;
+        lightBall.xScale = 1.5;
+        lightBall.yScale = 1.5;
+        lightBall.position = self.position;
+        target.addChild(lightBall);
+        
+        var face = SKSpriteNode(imageNamed: self.name!);
+        face.blendMode = SKBlendMode.Add;
+        face.color = UIColor.blueColor();
+        face.colorBlendFactor = 1.0;
+        face.xScale = self.xScale;
+        face.yScale = self.yScale;
+        face.zPosition = 0;
+        lightBall.addChild(face);
+        
+        var flashingBall = SKAction.sequence([
+            SKAction.fadeAlphaTo(0.3, duration: 0.1),
+            SKAction.fadeAlphaTo(1.0, duration: 0.1),
+            SKAction.fadeAlphaTo(0.3, duration: 0.1),
+            SKAction.fadeAlphaTo(1.0, duration: 0.1)
+            ]);
+        var jumpBall = SKActionEx.jumpTo(lightBall
+            , targetPoint: idolPos
+            , height: target.size.height - self.position.y
+            , duration: 0.5);
+        var endBall = SKAction.runBlock { () -> Void in
+            lightBall.removeFromParent();
+            callback(self.targetIdol);
+        }
+        var actionBall = SKAction.sequence([flashingBall, jumpBall, endBall]);
+        lightBall.runAction(actionBall);
+        
+        for i in 0 ... 10 {
+            let line = SKSpriteNode(imageNamed: "sparkline.png");
+            line.blendMode = SKBlendMode.Add;
+            line.color = UIColor.blueColor();
+            line.colorBlendFactor = 1.0;
+            line.xScale = 0.5;
+            line.yScale = 0.1;
+            line.alpha = 0.0;
+            line.zPosition = z;
+            let pr = CGFloat(1 + (arc4random() % 10)) * 0.1;
+            line.position = CGPointMake(self.position.x - self.size.width*0.5 + self.size.width*pr, self.position.y - self.size.height*0.5);
+            line.anchorPoint = CGPointMake(0.5, 0.05);
+            target.addChild(line);
+            
+            let r = NSTimeInterval(1 + arc4random() % 5);
+            var wait = SKAction.waitForDuration(r * 0.1);
+            
+            var disp = SKAction.runBlock({ () -> Void in
+                line.alpha = 1.0;
+            });
+            
+            var grow = SKAction.group([
+                SKAction.scaleXTo(0.1, duration: 0.1),
+                SKAction.scaleYTo(2.0, duration: 0.2),
+                SKAction.fadeAlphaTo(0, duration: 0.2)
+                ]);
+            
+            var endLine = SKAction.runBlock { () -> Void in
+                line.removeFromParent();
+            }
+            var actionLine = SKAction.sequence([wait, disp, grow, endLine]);
+            line.runAction(actionLine);
+        }
+    }
+
     func runDefaultAction() {
         let rot1 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
         let stay1 = SKAction.waitForDuration(0.4);

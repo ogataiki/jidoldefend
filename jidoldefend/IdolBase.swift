@@ -3,7 +3,7 @@ import SpriteKit
 class IdolBase : SKSpriteNode {
     
     // 熱中度関連
-    var passion: UInt32 = 1000;
+    var passion: UInt32 = 100;
 
     // 恐怖度関連
     var fear: UInt32 = 0;
@@ -79,6 +79,10 @@ class IdolBase : SKSpriteNode {
             self.runDefaultAction();
         }));
         self.runAction(SKAction.sequence(selfActions));
+    }
+    
+    func addPassion(value: UInt32) {
+        passion += value;
     }
     
     func addGrowAction() {
