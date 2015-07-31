@@ -6,13 +6,13 @@ class OtakuBase : SKSpriteNode {
     
     // 熱中度関連
     var passion: UInt32 = 0;
-    var passionOverFlowLimit: UInt32 = 1000;
+    var passionOverFlowLimit: UInt32 = 2000;
     var passionAddDistanceLimit: CGFloat = 160;
     var passionAddInterval: UInt32 = 250;
     var passionAddLastDate: NSDate = NSDate();
     
     // 新規オタク勧誘関連
-    var newAddInterval: UInt32 = 1;
+    var newAddInterval: UInt32 = 5;
     var newAddPassionThreshold: UInt32 = 500;
     var newAddLastDate: NSDate = NSDate();
     var newAddCount: UInt32 = 0;
@@ -97,7 +97,7 @@ class OtakuBase : SKSpriteNode {
             if s > Int(newAddInterval) {
                 
                 newAddLastDate = date_now;
-                if (arc4random() % 3 == 0)
+                if (arc4random() % 5 == 0)
                 {
                     newAddCount++;
                     return true;
@@ -324,7 +324,7 @@ class OtakuBase : SKSpriteNode {
         speech.runAction(seq);
     }
     
-    func runHevenEffect(idolPos: CGPoint, target: SKScene, z: CGFloat, callback: (Int) -> Void) {
+    func runHevenEffect(idolPos: CGPoint, target: SKScene, z: CGFloat, callback: (OtakuBase) -> Void) {
         
         let lightBall = SKSpriteNode(imageNamed: "spark.png");
         lightBall.blendMode = SKBlendMode.Add;
@@ -357,7 +357,7 @@ class OtakuBase : SKSpriteNode {
             , duration: 0.5);
         var endBall = SKAction.runBlock { () -> Void in
             lightBall.removeFromParent();
-            callback(self.targetIdol);
+            callback(self);
         }
         var actionBall = SKAction.sequence([flashingBall, jumpBall, endBall]);
         lightBall.runAction(actionBall);
@@ -397,7 +397,7 @@ class OtakuBase : SKSpriteNode {
         }
     }
   
-    func runHomeEffect(idolPos: CGPoint, target: SKScene, z: CGFloat, callback: (Int) -> Void) {
+    func runHomeEffect(idolPos: CGPoint, target: SKScene, z: CGFloat, callback: (OtakuBase) -> Void) {
         
         let lightBall = SKSpriteNode(imageNamed: "spark.png");
         lightBall.blendMode = SKBlendMode.Add;
@@ -430,7 +430,7 @@ class OtakuBase : SKSpriteNode {
             , duration: 0.5);
         var endBall = SKAction.runBlock { () -> Void in
             lightBall.removeFromParent();
-            callback(self.targetIdol);
+            callback(self);
         }
         var actionBall = SKAction.sequence([flashingBall, jumpBall, endBall]);
         lightBall.runAction(actionBall);

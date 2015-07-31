@@ -17,6 +17,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var status: Status = Status.game;
     
     var touchLocation: CGPoint = CGPointZero;
+    var touchEffectLastDate: NSDate = NSDate();
+    var touchEffectInterval: Int = 500;
     
     var applyforce_last_date: NSDate = NSDate();
     var applyforce_interval: Int = 50;
@@ -159,11 +161,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var otaku_gohome_map = Dictionary<String,OtakuBase>();
     var otaku_goHomeEffect_map = Dictionary<String,OtakuBase>();
     var otaku_last_add_date: NSDate = NSDate();
-    var otaku_add_interval: Int = 3;
+    var otaku_add_interval: Int = 10;
     let otaku_collision_category: UInt32 = 0x00000002;
     var otaku_add_positions: [CGPoint] = [];
     
-    var touchEffect: SKSpriteNode!;
+    //var touchEffect: SKSpriteNode!;
     
     var gameFrame = CGRectZero;
     
@@ -180,9 +182,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.contactDelegate = self;
         physicsWorldSpeed = self.physicsWorld.speed;
         
-        gameFrame = CGRectMake(self.frame.origin.x
+        gameFrame = CGRectMake(self.frame.origin.x + self.frame.size.width*0.05
             , self.frame.origin.y + self.frame.size.height*0.15
-            , self.frame.size.width
+            , self.frame.size.width*0.9
             , self.frame.size.height*0.7);
         
         self.physicsBody = SKPhysicsBody(edgeLoopFromRect: gameFrame);
@@ -233,8 +235,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in (touches as! Set<UITouch>) {
 
             if touchLocation == CGPointZero {
-                addTouchEffect(touch.locationInNode(self));
                 touchLocation = touch.locationInNode(self);
+                touchEffectLastDate = NSDate();
+                addTouchEffect(touch.locationInNode(self));
                 //updateIdolVelocity(touchLocation);
                 //updateOtakuVelocity_touch(touchLocation);
             }
@@ -247,8 +250,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in (touches as! Set<UITouch>) {
             
             if touchLocation != CGPointZero {
-                moveTouchEffect(touch.locationInNode(self));
                 touchLocation = touch.locationInNode(self);
+                //moveTouchEffect(touch.locationInNode(self));
                 //updateIdolVelocity(touchLocation);
                 //updateOtakuVelocity_touch(touchLocation);
             }
@@ -260,7 +263,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         for touch in (touches as! Set<UITouch>) {
             touchLocation = CGPointZero;
-            removeTouchEffect();
+            //removeTouchEffect();
         }
     }
     override func touchesCancelled(touches: Set<NSObject>, withEvent event: UIEvent) {
@@ -268,40 +271,67 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         for touch in (touches as! Set<UITouch>) {
             touchLocation = CGPointZero;
-            removeTouchEffect();
+            //removeTouchEffect();
         }
     }
 
     func addTouchEffect(location: CGPoint) {
-        touchEffect = SKSpriteNode(imageNamed: "toucheffect");
+        let touchEffect = SKSpriteNode(imageNamed: "toucheffect");
         touchEffect.position = location;
         touchEffect.blendMode = SKBlendMode.Add;
         touchEffect.zPosition = ZCtrl.touchEffect.rawValue;
         touchEffect.alpha = 0.8;
-        self.touchEffect.xScale = 1.0;
-        self.touchEffect.yScale = 1.0;
+        touchEffect.xScale = 1.0;
+        touchEffect.yScale = 1.0;
         self.addChild(touchEffect);
         
         let scale = SKAction.scaleTo(2.5, duration: 0.1);
         let fade = SKAction.fadeAlphaTo(0, duration: 0.1);
         let group = SKAction.group([scale, fade]);
-        let scale2 = SKAction.scaleTo(1.0, duration: 0.2);
-        let fade2 = SKAction.fadeAlphaTo(0.6, duration: 0.2);
-        let group2 = SKAction.group([scale2, fade2]);
-        let seq = SKAction.sequence([group, group2]);
-        touchEffect.runAction(SKAction.repeatActionForever(seq));
+        let seq = SKAction.sequence([group
+            , SKAction.runBlock({ () -> Void in
+                touchEffect.removeFromParent();
+            })]);
+        touchEffect.runAction(group);
     }
     func moveTouchEffect(location: CGPoint) {
         
+        addTouchEffect(location);
+        
+        /*
         if let effect = touchEffect {
             touchEffect.position = location;
         }
+        */
     }
     func removeTouchEffect() {
         
+        /*
         if let effect = touchEffect {
             touchEffect.removeFromParent();
             touchEffect = nil;
+        }
+        */
+    }
+    
+    func updateTouchEffect() {
+        if touchLocation != CGPointZero {
+            let date_now = NSDate();
+            let calendar = NSCalendar.currentCalendar()
+            var comp: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitNanosecond
+                , fromDate: touchEffectLastDate
+                , toDate: date_now
+                , options:nil);
+            // ミリ秒に変換
+            let ms = comp.nanosecond / 100000;
+            if touchLocation != CGPointZero {
+                if ms > touchEffectInterval {
+                    
+                    touchEffectLastDate = date_now;
+                    
+                    addTouchEffect(touchLocation);
+                }
+            }
         }
     }
     
@@ -309,6 +339,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
         
+        updateTouchEffect();
+
         switch status {
         case Status.game:
             updateGame();
@@ -412,9 +444,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             })
             ]));
     }
-    func otakuGoHevenEffectCallback(idolIndex: Int) {
-        idol_list[idolIndex].addPassion(3);
-        idol_list[idolIndex].addGrowAction();
+    func otakuGoHevenEffectCallback(otaku: OtakuBase) {
+        idol_list[otaku.targetIdol].addPassion(3);
+        idol_list[otaku.targetIdol].addGrowAction();
         updateGameLog(log: "アイドルはオタクの応援でやる気がアップ！");
     }
     
@@ -433,6 +465,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let otakuKeys = otaku_goHomeEffect_map.keys;
         for key in otakuKeys {
             let otaku = otaku_goHomeEffect_map[key];
+            if otaku!.name! == otaku_name.bad.rawValue {
+                // 撃退成功
+                updateGameLog(log: "態度の悪いオタクの撃退に成功！");
+                continue;
+            }
             if otaku!.isHomeEffect == false {
                 //バイブレーション　うざいので一旦止める
                 //AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate));
@@ -456,10 +493,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             })
             ]));
     }
-    func otakuGoHomeEffectCallback(idolIndex: Int) {
-        idol_list[idolIndex].addFear(10);
-        idol_list[idolIndex].addFearAction();
-        updateGameLog(log: "アイドルはオタクの心無い言葉に傷ついた。");
+    func otakuGoHomeEffectCallback(otaku: OtakuBase) {
+        idol_list[otaku.targetIdol].addFear(10);
+        idol_list[otaku.targetIdol].addFearAction();
+        updateGameLog(log: "アイドルはオタクの心無い言葉に深く傷ついた。");
     }
 
     
@@ -750,11 +787,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let seed = arc4random()%100;
         var imageName: otaku_name!;
-        if seed < 15 {
-            imageName = otaku_name.core;
-        }
-        else if seed < 30 {
-            imageName = otaku_name.bad;
+        if otaku_list.count > 5 {
+            if seed < 15 {
+                imageName = otaku_name.core;
+            }
+            else if seed < 30 {
+                imageName = otaku_name.bad;
+            }
+            else {
+                imageName = otaku_name.normal;
+            }
         }
         else {
             imageName = otaku_name.normal;
@@ -946,8 +988,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // 熱中度によるアイドルへの接近力を加える
             var baseVelocity = otaku.physicsBody!.velocity;
             var addVelocity: CGVector!;
-            var otakuPassion: CGFloat = CGFloat(otaku.passion) * 0.0001;
-            var otakuPassionSeed = (otakuPassion < 0) ? 0.02 : 0.02 + otakuPassion;
+            var otakuPassion: CGFloat = CGFloat(otaku.passion) * 0.00005;
+            var otakuPassionSeed = (otakuPassion < 0) ? 0.01 : 0.01 + otakuPassion;
             //println("\(otaku.tag):passion \(otakuPassion), \(otakuPassionSeed)")
             
             // 距離と熱中度により算出して設定

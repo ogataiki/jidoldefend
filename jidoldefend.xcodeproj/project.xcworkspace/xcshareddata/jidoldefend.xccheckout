@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>86691A3D-C39E-40EE-9940-98A31E93C0D3</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>jidoldefend</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>6852AB80C72D9D111CAE37C7B413B5E674729015</key>
 		<string>https://github.com/ogataiki/jidoldefend.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>jidoldefend.xcodeproj/project.xcworkspace</string>
+	<string>jidoldefend.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>6852AB80C72D9D111CAE37C7B413B5E674729015</key>
