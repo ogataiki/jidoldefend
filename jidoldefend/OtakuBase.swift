@@ -10,13 +10,39 @@ class OtakuBase : SKSpriteNode {
     var passionAddDistanceLimit: CGFloat = 160;
     var passionAddInterval: UInt32 = 250;
     var passionAddLastDate: NSDate = NSDate();
+    var passionGoHevenThreshold: UInt32 = 500;
     
-    // 新規オタク勧誘関連
-    var newAddInterval: UInt32 = 5;
-    var newAddPassionThreshold: UInt32 = 500;
-    var newAddLastDate: NSDate = NSDate();
-    var newAddCount: UInt32 = 0;
-    var newAddCountLImit: UInt32 = 1 + (arc4random()%20);
+    // 生存期限
+    var generateDate: NSDate = NSDate();
+    var timeLimit: UInt32 = 30;
+    var isHevened: Bool = false;
+    var isHevenedEffect: Bool = false;
+    var isHome: Bool = false;
+    var isHomeEffect: Bool = false;
+    enum Result: UInt32 {
+        case goHome = 0
+        case goHeven = 1
+    }
+    func isTimeLimit() -> (limit: Bool, result: Result) {
+        let date_now = NSDate();
+        let calendar = NSCalendar.currentCalendar()
+        var comp: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitSecond
+            , fromDate: generateDate
+            , toDate: date_now
+            , options:nil);
+        let sec = comp.second;
+        var limit = false;
+        if sec > Int(timeLimit) {
+            limit = true;
+        }
+        var goHeven = Result.goHome;
+        if passion > passionGoHevenThreshold {
+            goHeven = Result.goHeven;
+        }
+        return (limit, goHeven);
+    }
+    
+    var isAddPassionIncreased: Bool = false;
     
     // オタクAIパターン
     enum AI: Int {
@@ -28,12 +54,6 @@ class OtakuBase : SKSpriteNode {
     // 推しメン
     // アイドル数が複数の場合はこれに設定する
     var targetIdol: Int = 0;
-    
-    // 帰宅関連
-    var goHomeInterval: UInt32 = 7;
-    var goHomeBaseDate: NSDate = NSDate();
-    var isHome: Bool = false;
-    var isHomeEffect: Bool = false;
     
     // パーティクル
     var passionFireParticle: SKEmitterNode!;
@@ -50,8 +70,6 @@ class OtakuBase : SKSpriteNode {
         case rect = "otaku_speech3"
     }
     
-    var isHevened: Bool = false;
-    var isHevenedEffect: Bool = false;
 
     func addPassion(value: Int) {
         let date_now = NSDate();
@@ -82,66 +100,6 @@ class OtakuBase : SKSpriteNode {
         }
         //println("addPassion:\(value) passion:\(passion)");
     }
-    
-    func addNewOtaku() ->Bool {
-        
-        let date_now = NSDate();
-        if passion >= newAddPassionThreshold {
-            
-            let calendar = NSCalendar.currentCalendar()
-            var comp: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitSecond
-                , fromDate: newAddLastDate
-                , toDate: date_now
-                , options:nil);
-            let s = comp.second;
-            if s > Int(newAddInterval) {
-                
-                newAddLastDate = date_now;
-                if (arc4random() % 5 == 0)
-                {
-                    newAddCount++;
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    func isGoToHeven() -> Bool {
-        if(passion >= passionOverFlowLimit || newAddCount > newAddCountLImit)
-        {
-            isHevened = true;
-        }
-        return isHevened;
-    }
-    
-    func isGoHome() -> Bool {
-        
-        let date_now = NSDate();
-        if passion == 0 {
-            let calendar = NSCalendar.currentCalendar()
-            var comp: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitSecond
-                , fromDate: goHomeBaseDate
-                , toDate: date_now
-                , options:nil);
-            let s = comp.second;
-            if s > Int(goHomeInterval) {
-                isHome = true;
-            }
-        }
-        else {
-            goHomeBaseDate = date_now;
-        }
-        return isHome;
-    }
-    
-    func isActive() -> Bool {
-        if isGoToHeven() == false && isGoHome() == false {
-            return true;
-        }
-        return false;
-    }
-    
     
     func addGrowPassion(target: SKScene, z: CGFloat = 0) {
         
