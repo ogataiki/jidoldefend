@@ -14,7 +14,7 @@ class OtakuBase : SKSpriteNode {
     
     // 生存期限
     var generateDate: NSDate = NSDate();
-    var timeLimit: UInt32 = 30;
+    var timeLimit: UInt32 = 15;
     var isHevened: Bool = false;
     var isHevenedEffect: Bool = false;
     var isHome: Bool = false;
@@ -42,7 +42,12 @@ class OtakuBase : SKSpriteNode {
         return (limit, goHeven);
     }
     
-    var isAddPassionIncreased: Bool = false;
+    func isPassionOverFlow() -> Bool {
+        if passion >= passionOverFlowLimit {
+            return true;
+        }
+        return false;
+    }
     
     // オタクAIパターン
     enum AI: Int {

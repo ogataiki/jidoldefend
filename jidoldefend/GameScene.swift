@@ -105,7 +105,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // otaku_normal
         "遠いわ", "推しメン遠い", "見えねー", "おいおい", "近づきたい", "遠いぞ", "こっちこいよ", "俺だけ遠くね？", "冷めるわ〜", "みえねーじゃん",
         // otaku_core
-        "遠いなり", "", "見えねー", "おいおい", "近づきたい", "遠いぞ", "こっちこいよ", "俺だけ遠くね？", "冷めるわ〜", "みえねーじゃん",
+        "遠いなり", "萎え〜", "見えないござる", "おいおい", "近づきたい", "遠いぞ", "こっちこいよ", "俺だけ遠くね？", "冷めるわ〜", "みえねーじゃん",
         // otaku_bad
         "ハンッ！", "こんなものか", "つまらん", "もっと楽しませろ", "くそが", "おいおい", "・・・", "所詮アイドル", "だめだな", "やれやれ",
     ];
@@ -149,6 +149,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let otaku_normal_velocity: CGFloat = 60.0;
     let otaku_core_velocity: CGFloat = 200.0;
     let otaku_bad_velocity: CGFloat = 100.0;
+    var otaku_generate_count: Int = 1;
     
     var idol_list: [IdolBase] = [];
     let idol_collision_category: UInt32 = 0x00000001;
@@ -394,7 +395,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if s > otaku_add_interval && otaku_active_map.count <= 0 {
             
             otaku_last_add_date = date_now;
-            generateOtaku();
+            generateOtaku(addcount: otaku_generate_count);
         }
     }
 
@@ -775,8 +776,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 , baseLocation: otaku.position
                 , touchLocation: location);
             
-            addVelocity.dx = min(addVelocity.dx, velocity_max) * 0.5;
-            addVelocity.dy = min(addVelocity.dy, velocity_max) * 0.5;
+            let ratio: CGFloat;
+            switch otaku.name! {
+            case otaku_name.normal.rawValue:
+                ratio = 0.3;
+            case otaku_name.bad.rawValue:
+                ratio = 0.3;
+            case otaku_name.core.rawValue:
+                ratio = 0.5;
+            default:
+                ratio = 0.5;
+            }
+            addVelocity.dx = min(addVelocity.dx, velocity_max) * ratio;
+            addVelocity.dy = min(addVelocity.dy, velocity_max) * ratio;
             otaku.physicsBody?.applyForce(addVelocity);
         }
     }
@@ -798,10 +810,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let seed = arc4random()%100;
             var imageName: otaku_name!;
             if otaku_list.count > 5 {
-                if seed < 15 {
+                if seed < 5 {
                     imageName = otaku_name.core;
                 }
-                else if seed < 30 {
+                else if seed < 20 {
                     imageName = otaku_name.bad;
                 }
                 else {
@@ -949,13 +961,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             , back: back);
                     }
 
-                    otaku.addPassionFire(self, z:ZCtrl.otakuPassionFire.rawValue);
-                    
-                    // 熱くなると仲間を呼ぶ
-                    if otaku.isAddPassionIncreased == false {
-                        generateOtaku();
-                        otaku.isAddPassionIncreased = true;
-                    }
+                    otaku.addPassionFire(self, z:ZCtrl.otakuPassionFire.rawValue);                    
                 }
             }
             else {
@@ -995,9 +1001,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     otakuGoHeven(otaku);
                     
                     // 昇天すると仲間を呼ぶ
-                    generateOtaku();
+                    var count: Int = 1;
+                    if otaku.isPassionOverFlow() {
+                        count = 2;
+                        otaku_generate_count++;
+                    }
+                    generateOtaku(addcount: count);
                 }
                 else {
+                    otaku_generate_count--;
+                    if otaku_generate_count == 0 {
+                        otaku_generate_count = 1;
+                    }
                     otakuGoHome(otaku);
                 }
                 return;
