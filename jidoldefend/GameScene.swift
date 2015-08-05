@@ -47,13 +47,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case otakuHevenedEffect = 2
         case otakuGoHomeEffect = 1
         case idol = 0
-        case otakuHevenedSpeech = -1
-        case otakuGoHomeSpeech = -2
-        case effectBackBlack = -3
-        case otakuGrowPassion = -4
-        case otakuDownPassion = -5
-        case otaku = -6
-        case otakuPassionFire = -7
+        case otakuGrowPassion = -1
+        case otakuDownPassion = -2
+        case otakuPassionFire = -3
+        case otaku = -4
+        case otakuHevenedSpeech = -5
+        case otakuGoHomeSpeech = -6
+        case effectBackBlack = -7
         case speech = -8
         case otakuHevened = -9
         case back = -10
@@ -780,16 +780,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 , baseLocation: otaku.position
                 , touchLocation: location);
             
-            let ratio: CGFloat;
+            var ratio: CGFloat = 0.1 + (0.1 * CGFloat(otaku_active_map.count / 5));
             switch otaku.name! {
             case otaku_name.normal.rawValue:
-                ratio = 0.3;
+                ratio += 0.2;
             case otaku_name.bad.rawValue:
-                ratio = 0.3;
+                ratio += 0.5;
             case otaku_name.core.rawValue:
-                ratio = 0.5;
+                ratio += 0.5;
             default:
-                ratio = 0.5;
+                ratio += 0.2;
             }
             addVelocity.dx = min(addVelocity.dx, velocity_max) * ratio;
             addVelocity.dy = min(addVelocity.dy, velocity_max) * ratio;
