@@ -156,14 +156,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var idol_move_targets: [CGPoint] = [];
     
     var otaku_list: [OtakuBase] = [];
-    var otaku_active_map = Dictionary<String,OtakuBase>();
-    var otaku_hevened_map = Dictionary<String,OtakuBase>();
-    var otaku_hevenEffect_map = Dictionary<String,OtakuBase>();
-    var otaku_gohome_map = Dictionary<String,OtakuBase>();
-    var otaku_goHomeEffect_map = Dictionary<String,OtakuBase>();
+    var otaku_active_map = Dictionary<String,Int>();
+    var otaku_hevened_map = Dictionary<String,Int>();
+    var otaku_hevenEffect_map = Dictionary<String,Int>();
+    var otaku_hulk_list: [Int] = [];
+    var otaku_gohome_map = Dictionary<String,Int>();
+    var otaku_goHomeEffect_map = Dictionary<String,Int>();
     var otaku_last_add_date: NSDate = NSDate();
     var otaku_add_interval: Int = 6;
     let otaku_collision_category: UInt32 = 0x00000002;
+    let otaku_normal_collision_category: UInt32 = 0x00000010;
+    let otaku_core_collision_category: UInt32 = 0x00000020;
+    let otaku_bad_collision_category: UInt32 = 0x00000040;
     var otaku_add_positions: [CGPoint] = [];
     
     //var touchEffect: SKSpriteNode!;
@@ -415,16 +419,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let otakuKeys = otaku_hevenEffect_map.keys;
         for key in otakuKeys {
-            let otaku = otaku_hevenEffect_map[key];
-            if otaku!.isHevenedEffect == false {
+            let otaku = otaku_list[otaku_hevenEffect_map[key]!];
+            if otaku.isHevenedEffect == false {
                 //バイブレーション　うざいので一旦止める
                 //AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate));
                 
-                otaku!.runHevenEffect(idol_list[otaku!.targetIdol].position
+                otaku.runHevenEffect(idol_list[otaku.targetIdol].position
                     , target: self
                     , z: ZCtrl.otakuHevenedEffect.rawValue
                     , callback: otakuGoHevenEffectCallback);
-                otaku!.isHevenedEffect = true;
+                otaku.isHevenedEffect = true;
                 otaku_hevenEffect_map[key] = nil;
             }
         }
@@ -463,21 +467,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let otakuKeys = otaku_goHomeEffect_map.keys;
         for key in otakuKeys {
-            let otaku = otaku_goHomeEffect_map[key];
-            if otaku!.name! == otaku_name.bad.rawValue {
+            let otaku = otaku_list[otaku_goHomeEffect_map[key]!];
+            if otaku.name! == otaku_name.bad.rawValue {
                 // 撃退成功
                 updateGameLog(log: "態度の悪いオタクの撃退に成功！");
                 continue;
             }
-            if otaku!.isHomeEffect == false {
+            if otaku.isHomeEffect == false {
                 //バイブレーション　うざいので一旦止める
                 //AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate));
                 
-                otaku!.runHomeEffect(idol_list[otaku!.targetIdol].position
+                otaku.runHomeEffect(idol_list[otaku.targetIdol].position
                     , target: self
                     , z: ZCtrl.otakuGoHomeEffect.rawValue
                     , callback: otakuGoHomeEffectCallback);
-                otaku!.isHomeEffect = true;
+                otaku.isHomeEffect = true;
                 otaku_goHomeEffect_map[key] = nil;
             }
         }
@@ -523,7 +527,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         let otakuKeys = otaku_active_map.keys;
         for key in otakuKeys {
-            let otaku = otaku_active_map[key]!;
+            let otaku = otaku_list[otaku_active_map[key]!];
             otaku.paused = true;
         }
     }
@@ -536,7 +540,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         let otakuKeys = otaku_active_map.keys;
         for key in otakuKeys {
-            let otaku = otaku_active_map[key]!;
+            let otaku = otaku_list[otaku_active_map[key]!];
             otaku.paused = false;
         }
     }
@@ -771,7 +775,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // タッチによる力を加える
         let keys = Array(otaku_active_map.keys);
         for i in 0 ..< keys.count {
-            var otaku = otaku_active_map[keys[i]]!;
+            var otaku = otaku_list[otaku_active_map[keys[i]]!];
             var addVelocity = calcVelocity(otaku_touch_velocity
                 , baseLocation: otaku.position
                 , touchLocation: location);
@@ -795,12 +799,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func otakuAddSetting() {
-        otaku_add_positions = [
-            CGPointMake(self.view!.center.x - gameFrame.size.width*0.4, self.view!.center.y - gameFrame.size.height*0.35)
-            , CGPointMake(self.view!.center.x - gameFrame.size.width*0.4, self.view!.center.y + gameFrame.size.height*0.35)
-            , CGPointMake(self.view!.center.x + gameFrame.size.width*0.4, self.view!.center.y - gameFrame.size.height*0.35)
-            , CGPointMake(self.view!.center.x + gameFrame.size.width*0.4, self.view!.center.y + gameFrame.size.height*0.35)
-        ];
+        for i in 0 ..< 9 {
+            otaku_add_positions.append(CGPointMake(self.view!.center.x - gameFrame.size.width*(0.4-(CGFloat(i)*0.05)), self.view!.center.y - gameFrame.size.height*0.35))
+            otaku_add_positions.append(CGPointMake(self.view!.center.x - gameFrame.size.width*(0.4-(CGFloat(i)*0.05)), self.view!.center.y + gameFrame.size.height*0.35))
+            otaku_add_positions.append(CGPointMake(self.view!.center.x + gameFrame.size.width*(0.4-(CGFloat(i)*0.05)), self.view!.center.y - gameFrame.size.height*0.35))
+            otaku_add_positions.append(CGPointMake(self.view!.center.x + gameFrame.size.width*(0.4-(CGFloat(i)*0.05)), self.view!.center.y + gameFrame.size.height*0.35))
+        }
+        for i in 0 ..< 8 {
+            otaku_add_positions.append(CGPointMake(self.view!.center.x - gameFrame.size.width*0.4, self.view!.center.y - gameFrame.size.height*(0.35-(CGFloat(i)*0.05))))
+            otaku_add_positions.append(CGPointMake(self.view!.center.x - gameFrame.size.width*0.4, self.view!.center.y + gameFrame.size.height*(0.35-(CGFloat(i)*0.05))))
+            otaku_add_positions.append(CGPointMake(self.view!.center.x + gameFrame.size.width*0.4, self.view!.center.y - gameFrame.size.height*(0.35-(CGFloat(i)*0.05))))
+            otaku_add_positions.append(CGPointMake(self.view!.center.x + gameFrame.size.width*0.4, self.view!.center.y + gameFrame.size.height*(0.35-(CGFloat(i)*0.05))))
+        }
     }
     
     func generateOtaku(addcount: Int = 1) {
@@ -809,19 +819,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             let seed = arc4random()%100;
             var imageName: otaku_name!;
+            var collisionCategory: UInt32 = 0;
+            var collisionMask: UInt32 = 0;
             if otaku_list.count > 5 {
                 if seed < 5 {
                     imageName = otaku_name.core;
+                    collisionCategory = otaku_core_collision_category;
+                    collisionMask = otaku_normal_collision_category | otaku_bad_collision_category;
                 }
                 else if seed < 20 {
                     imageName = otaku_name.bad;
+                    collisionCategory = otaku_bad_collision_category;
+                    collisionMask = otaku_normal_collision_category | otaku_core_collision_category;
                 }
                 else {
                     imageName = otaku_name.normal;
+                    collisionCategory = otaku_normal_collision_category;
+                    collisionMask = otaku_bad_collision_category | otaku_core_collision_category;
                 }
             }
             else {
                 imageName = otaku_name.normal;
+                collisionMask = otaku_bad_collision_category | otaku_core_collision_category;
             }
             
             var otaku = OtakuBase(imageNamed:imageName.rawValue);
@@ -844,27 +863,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             otaku.physicsBody?.friction = 0;          // 摩擦
             
             //そのノードがどのカテゴリか示す（デフォルトでは全てのカテゴリに含まれる）
-            otaku.physicsBody?.categoryBitMask = otaku_collision_category;
+            otaku.physicsBody?.categoryBitMask = otaku_collision_category | collisionCategory;
             
             //どのカテゴリのノードと衝突した場合に、デリゲートメソッドを呼び出すか示すフラグ
             otaku.physicsBody?.contactTestBitMask = 0x00000000;
             
             //どのカテゴリのノードと衝突した場合に、反射運動させるかを示すフラグ
-            otaku.physicsBody?.collisionBitMask = idol_collision_category | otaku_collision_category;
+            otaku.physicsBody?.collisionBitMask = idol_collision_category /*| otaku_collision_category*/ | collisionMask;
             
             otaku.runDefaultAction();
             
             self.addChild(otaku);
             
-            otaku.runSpeech(otakuAddSpeechGet(otaku.name!)
-                , balloon: OtakuBase.SpeechBalloon.normal
-                , action: OtakuBase.SpeechAction.normal
-                , frame: 90
-                , target: self, z: ZCtrl.speech.rawValue
-                , back: back)
+            if i < 5 {
+                otaku.runSpeech(otakuAddSpeechGet(otaku.name!)
+                    , balloon: OtakuBase.SpeechBalloon.normal
+                    , action: OtakuBase.SpeechAction.normal
+                    , frame: 90
+                    , target: self, z: ZCtrl.speech.rawValue
+                    , back: back)
+            }
             
             otaku.tag = "\(otaku_list.count)"
-            otaku_active_map[otaku.tag] = otaku;
+            otaku_active_map[otaku.tag] = otaku_list.count;
             
             otaku_list.append(otaku);
         }
@@ -880,8 +901,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             , target: self, z: ZCtrl.otakuHevenedSpeech.rawValue
             , back: back)
 
-        otaku_hevened_map[otaku.tag] = otaku;
-        otaku_hevenEffect_map[otaku.tag] = otaku;
+        otaku_hevened_map[otaku.tag] = NSString(string: otaku.tag).integerValue;
+        otaku_hevenEffect_map[otaku.tag] = NSString(string: otaku.tag).integerValue;
         
         otaku.removeAllPaticle();
 
@@ -896,6 +917,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         otaku.isHevened = true;
         
+        otaku_hulk_list.append(NSString(string: otaku.tag).integerValue);
+        if otaku_hulk_list.count > 10 {
+            let hulk = otaku_list[otaku_hulk_list[0]];
+            hulk.removeFromParent();
+            otaku_hulk_list.removeAtIndex(0);
+        }
+
         updateGameLog(log: "\(getOtakuNameJP(otaku.name!))はアイドルの魅力に昇天した！");
 
         self.status = Status.otakuGoHevenEffectStart;
@@ -910,8 +938,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             , target: self, z: ZCtrl.otakuGoHomeSpeech.rawValue
             , back: back)
         
-        otaku_gohome_map[otaku.tag] = otaku;
-        otaku_goHomeEffect_map[otaku.tag] = otaku;
+        otaku_gohome_map[otaku.tag] = NSString(string: otaku.tag).integerValue;
+        otaku_goHomeEffect_map[otaku.tag] = NSString(string: otaku.tag).integerValue;
         
         otaku.removeAllPaticle();
 
@@ -932,7 +960,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let keys = Array(otaku_active_map.keys);
         for i in 0 ..< keys.count {
-            var otaku = otaku_active_map[keys[i]]!;
+            var otaku = otaku_list[otaku_active_map[keys[i]]!];
             
             var idolPosition = idol_list[otaku.targetIdol].position;
             let distanceDiff = CGSizeMake(idolPosition.x - otaku.position.x, idolPosition.y - otaku.position.y);
@@ -1084,7 +1112,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
      
         var idolBody, otakuBody: SKPhysicsBody!;
         
-        if contact.bodyA.categoryBitMask == idol_collision_category && contact.bodyB.categoryBitMask == otaku_collision_category
+        if contact.bodyA.categoryBitMask == idol_collision_category && (contact.bodyB.categoryBitMask & otaku_collision_category) != 0
         {
             idolBody = contact.bodyA;
             otakuBody = contact.bodyB;
@@ -1094,7 +1122,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
-        else if contact.bodyB.categoryBitMask == idol_collision_category && contact.bodyA.categoryBitMask == otaku_collision_category
+        else if contact.bodyB.categoryBitMask == idol_collision_category && (contact.bodyA.categoryBitMask & otaku_collision_category) != 0
         {
             idolBody = contact.bodyB;
             otakuBody = contact.bodyA;
@@ -1110,7 +1138,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didEndContact(contact: SKPhysicsContact) {
         var idolBody, otakuBody: SKPhysicsBody!;
         
-        if contact.bodyA.categoryBitMask == idol_collision_category && contact.bodyB.categoryBitMask == otaku_collision_category
+        if contact.bodyA.categoryBitMask == idol_collision_category && (contact.bodyB.categoryBitMask & otaku_collision_category) != 0
         {
             idolBody = contact.bodyA;
             otakuBody = contact.bodyB;
@@ -1120,7 +1148,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
-        else if contact.bodyB.categoryBitMask == idol_collision_category && contact.bodyA.categoryBitMask == otaku_collision_category
+        else if contact.bodyB.categoryBitMask == idol_collision_category && (contact.bodyA.categoryBitMask & otaku_collision_category) != 0
         {
             idolBody = contact.bodyB;
             otakuBody = contact.bodyA;

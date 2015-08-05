@@ -24,6 +24,11 @@ class OtakuBase : SKSpriteNode {
         case goHeven = 1
     }
     func isTimeLimit() -> (limit: Bool, result: Result) {
+        
+        if isPassionOverFlow() {
+            return (true, Result.goHeven);
+        }
+        
         let date_now = NSDate();
         let calendar = NSCalendar.currentCalendar()
         var comp: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitSecond
