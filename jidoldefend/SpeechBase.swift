@@ -6,16 +6,16 @@ class SpeechBase : SKSpriteNode {
         case label = 0
     }
     var label: SKLabelNode!;
-    func addLabel (text: String) {
-        if let l = label {
+    func addLabel (_ text: String) {
+        if (label) != nil {
             label.removeFromParent();
             label = nil;
         }
         label = SKLabelNode(text: text);
-        label.fontColor = UIColor.blackColor();
+        label.fontColor = UIColor.black;
         label.fontSize = 14;
-        label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center;
-        label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center;
+        label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.center;
+        label.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center;
         label.xScale = self.xScale;
         label.yScale = self.yScale;
         label.zPosition = ZCtrl.label.rawValue;

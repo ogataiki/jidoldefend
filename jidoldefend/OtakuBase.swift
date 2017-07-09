@@ -9,11 +9,11 @@ class OtakuBase : SKSpriteNode {
     var passionOverFlowLimit: UInt32 = 2000;
     var passionAddDistanceLimit: CGFloat = 160;
     var passionAddInterval: UInt32 = 250;
-    var passionAddLastDate: NSDate = NSDate();
+    var passionAddLastDate: Date = Date();
     var passionGoHevenThreshold: UInt32 = 500;
     
     // 生存期限
-    var generateDate: NSDate = NSDate();
+    var generateDate: Date = Date();
     var timeLimit: UInt32 = 15;
     var isHevened: Bool = false;
     var isHevenedEffect: Bool = false;
@@ -29,15 +29,14 @@ class OtakuBase : SKSpriteNode {
             return (true, Result.goHeven);
         }
         
-        let date_now = NSDate();
-        let calendar = NSCalendar.currentCalendar()
-        var comp: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitSecond
-            , fromDate: generateDate
-            , toDate: date_now
-            , options:nil);
+        let date_now = Date();
+        let calendar = Calendar.current
+        var comp: DateComponents = calendar.dateComponents([Calendar.Component.second]
+            , from: generateDate
+            , to: date_now);
         let sec = comp.second;
         var limit = false;
-        if sec > Int(timeLimit) {
+        if sec! > Int(timeLimit) {
             limit = true;
         }
         var goHeven = Result.goHome;
@@ -81,18 +80,17 @@ class OtakuBase : SKSpriteNode {
     }
     
 
-    func addPassion(value: Int) {
-        let date_now = NSDate();
+    func addPassion(_ value: Int) {
+        let date_now = Date();
         if(passion >= passionOverFlowLimit)
         {
             return;
         }
-        let calendar = NSCalendar.currentCalendar()
-        var comp: NSDateComponents = calendar.components(NSCalendarUnit.CalendarUnitNanosecond
-            , fromDate: passionAddLastDate
-            , toDate: date_now
-            , options:nil);
-        let ms = comp.nanosecond / 100000;
+        let calendar = Calendar.current
+        var comp: DateComponents = calendar.dateComponents([Calendar.Component.nanosecond]
+            , from: passionAddLastDate
+            , to: date_now);
+        let ms = comp.nanosecond! / 100000;
         if ms > Int(passionAddInterval) {
             
             passionAddLastDate = date_now;
@@ -111,14 +109,14 @@ class OtakuBase : SKSpriteNode {
         //println("addPassion:\(value) passion:\(passion)");
     }
     
-    func addGrowPassion(target: SKScene, z: CGFloat = 0) {
+    func addGrowPassion(_ target: SKScene, z: CGFloat = 0) {
         
-        if let fire = growPassionParticle {}
+        if (growPassionParticle) != nil {}
         else {
-            let path = NSBundle.mainBundle().pathForResource("GrowPassion", ofType: "sks")!;
-            var particle = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as! SKEmitterNode
+            let path = Bundle.main.path(forResource: "GrowPassion", ofType: "sks")!;
+            let particle = NSKeyedUnarchiver.unarchiveObject(withFile: path) as! SKEmitterNode
             
-            particle.position = CGPointMake(self.position.x, self.position.y - self.size.height*0.2);
+            particle.position = CGPoint(x: self.position.x, y: self.position.y - self.size.height*0.2);
             
             //particle.numParticlesToEmit = 50 // 何個、粒を出すか。
             //particle.particleBirthRate = 50 // 一秒間に何個、粒を出すか。
@@ -134,7 +132,7 @@ class OtakuBase : SKSpriteNode {
     }
     func updateGrowPassion() {
         if let fire = growPassionParticle {
-            fire.position = CGPointMake(self.position.x, self.position.y - self.size.height*0.2);
+            fire.position = CGPoint(x: self.position.x, y: self.position.y - self.size.height*0.2);
         }
     }
     func removeGrowPassion() {
@@ -145,14 +143,14 @@ class OtakuBase : SKSpriteNode {
         }
     }
     
-    func addDownPassion(target: SKScene, z: CGFloat = 0) {
+    func addDownPassion(_ target: SKScene, z: CGFloat = 0) {
         
-        if let fire = downPassionParticle {}
+        if (downPassionParticle) != nil {}
         else {
-            let path = NSBundle.mainBundle().pathForResource("DownPassion", ofType: "sks")!;
-            var particle = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as! SKEmitterNode
+            let path = Bundle.main.path(forResource: "DownPassion", ofType: "sks")!;
+            let particle = NSKeyedUnarchiver.unarchiveObject(withFile: path) as! SKEmitterNode
             
-            particle.position = CGPointMake(self.position.x, self.position.y + self.size.height*0.25);
+            particle.position = CGPoint(x: self.position.x, y: self.position.y + self.size.height*0.25);
             
             //particle.numParticlesToEmit = 50 // 何個、粒を出すか。
             //particle.particleBirthRate = 50 // 一秒間に何個、粒を出すか。
@@ -168,7 +166,7 @@ class OtakuBase : SKSpriteNode {
     }
     func updateDownPassion() {
         if let fire = downPassionParticle {
-            fire.position = CGPointMake(self.position.x, self.position.y + self.size.height*0.25);
+            fire.position = CGPoint(x: self.position.x, y: self.position.y + self.size.height*0.25);
         }
     }
     func removeDownPassion() {
@@ -179,14 +177,14 @@ class OtakuBase : SKSpriteNode {
         }
     }
 
-    func addPassionFire(target: SKScene, z: CGFloat = 0) {
+    func addPassionFire(_ target: SKScene, z: CGFloat = 0) {
         
-        if let fire = passionFireParticle {}
+        if (passionFireParticle) != nil {}
         else {
-            let path = NSBundle.mainBundle().pathForResource("PassionFire", ofType: "sks")!;
-            var particle = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as! SKEmitterNode
+            let path = Bundle.main.path(forResource: "PassionFire", ofType: "sks")!;
+            let particle = NSKeyedUnarchiver.unarchiveObject(withFile: path) as! SKEmitterNode
             
-            particle.position = CGPointMake(self.position.x, self.position.y - self.size.height);
+            particle.position = CGPoint(x: self.position.x, y: self.position.y - self.size.height);
             
             //particle.numParticlesToEmit = 50 // 何個、粒を出すか。
             //particle.particleBirthRate = 50 // 一秒間に何個、粒を出すか。
@@ -202,7 +200,7 @@ class OtakuBase : SKSpriteNode {
     }
     func updatePassionFire() {
         if let fire = passionFireParticle {
-            fire.position = CGPointMake(self.position.x, self.position.y + self.size.height*0.1);
+            fire.position = CGPoint(x: self.position.x, y: self.position.y + self.size.height*0.1);
         }
     }
     func removePassionFire() {
@@ -228,7 +226,7 @@ class OtakuBase : SKSpriteNode {
     }
     
     
-    func runSpeech(text: String
+    func runSpeech(_ text: String
         , balloon: SpeechBalloon
         , action: SpeechAction
         , frame: Int
@@ -240,8 +238,8 @@ class OtakuBase : SKSpriteNode {
         // 基本はキャラの左上に表示
         let widthoffset: CGFloat = 0.6;
         let heightoffset: CGFloat = 0.5;
-        speech.position = CGPointMake(self.position.x - speech.size.width*widthoffset
-            , self.position.y + speech.size.height*heightoffset);
+        speech.position = CGPoint(x: self.position.x - speech.size.width*widthoffset
+            , y: self.position.y + speech.size.height*heightoffset);
         if(speech.position.x - speech.size.width*0.5 < target.frame.origin.x) {
             // 左が見切れる場合は右側に表示
             speech.position.x = self.position.x + speech.size.width*widthoffset;
@@ -261,42 +259,40 @@ class OtakuBase : SKSpriteNode {
         case SpeechAction.normal:
             break;
         case SpeechAction.jump:
-            seqActions.append(SKAction.moveBy(CGVectorMake(0.0, 0.1), duration: 0.1))
-            seqActions.append(SKAction.moveBy(CGVectorMake(0.0, -0.1), duration: 0.1))
-            seqActions.append(SKAction.moveBy(CGVectorMake(0.0, 0.1), duration: 0.1))
-            seqActions.append(SKAction.moveBy(CGVectorMake(0.0, -0.1), duration: 0.1))
+            seqActions.append(SKAction.move(by: CGVector(dx: 0.0, dy: 0.1), duration: 0.1))
+            seqActions.append(SKAction.move(by: CGVector(dx: 0.0, dy: -0.1), duration: 0.1))
+            seqActions.append(SKAction.move(by: CGVector(dx: 0.0, dy: 0.1), duration: 0.1))
+            seqActions.append(SKAction.move(by: CGVector(dx: 0.0, dy: -0.1), duration: 0.1))
         case SpeechAction.powerful:
             let xscale = speech.xScale;
             let yscale = speech.yScale;
             speech.xScale = 0.0;
             speech.yScale = 0.0;
             
-            seqActions.append(SKAction.group([SKAction.scaleXTo(xscale*1.2, duration: 0.2)
-                , SKAction.scaleYTo(yscale*1.2, duration: 0.2)
+            seqActions.append(SKAction.group([SKAction.scaleX(to: xscale*1.2, duration: 0.2)
+                , SKAction.scaleY(to: yscale*1.2, duration: 0.2)
                 ]))
-            seqActions.append(SKAction.group([SKAction.scaleXTo(xscale*0.95, duration: 0.1)
-                , SKAction.scaleYTo(yscale*0.95, duration: 0.1)
+            seqActions.append(SKAction.group([SKAction.scaleX(to: xscale*0.95, duration: 0.1)
+                , SKAction.scaleY(to: yscale*0.95, duration: 0.1)
                 ]));
-            seqActions.append(SKAction.group([SKAction.scaleXTo(xscale*1.0, duration: 0.1)
-                , SKAction.scaleYTo(yscale*1.0, duration: 0.1)
+            seqActions.append(SKAction.group([SKAction.scaleX(to: xscale*1.0, duration: 0.1)
+                , SKAction.scaleY(to: yscale*1.0, duration: 0.1)
                 ]));
-        default:
-            break;
         }
-        seqActions.append(SKAction.waitForDuration(1.0));
-        let endfunc = SKAction.runBlock { () -> Void in
+        seqActions.append(SKAction.wait(forDuration: 1.0));
+        let endfunc = SKAction.run { () -> Void in
             speech.removeFromParent();
         }
         seqActions.append(endfunc);
         let seq = SKAction.sequence(seqActions);
-        speech.runAction(seq);
+        speech.run(seq);
     }
     
-    func runHevenEffect(idolPos: CGPoint, target: SKScene, z: CGFloat, callback: (OtakuBase) -> Void) {
+    func runHevenEffect(_ idolPos: CGPoint, target: SKScene, z: CGFloat, callback: @escaping (OtakuBase) -> Void) {
         
         let lightBall = SKSpriteNode(imageNamed: "spark.png");
-        lightBall.blendMode = SKBlendMode.Add;
-        lightBall.color = UIColor.yellowColor();
+        lightBall.blendMode = SKBlendMode.add;
+        lightBall.color = UIColor.yellow;
         lightBall.colorBlendFactor = 1.0;
         lightBall.zPosition = z;
         lightBall.xScale = 1.5;
@@ -304,72 +300,72 @@ class OtakuBase : SKSpriteNode {
         lightBall.position = self.position;
         target.addChild(lightBall);
         
-        var face = SKSpriteNode(imageNamed: self.name!);
-        face.blendMode = SKBlendMode.Add;
-        face.color = UIColor.yellowColor();
+        let face = SKSpriteNode(imageNamed: self.name!);
+        face.blendMode = SKBlendMode.add;
+        face.color = UIColor.yellow;
         face.colorBlendFactor = 1.0;
         face.xScale = self.xScale;
         face.yScale = self.yScale;
         face.zPosition = 0;
         lightBall.addChild(face);
 
-        var flashingBall = SKAction.sequence([
-            SKAction.fadeAlphaTo(0.3, duration: 0.1),
-            SKAction.fadeAlphaTo(1.0, duration: 0.1),
-            SKAction.fadeAlphaTo(0.3, duration: 0.1),
-            SKAction.fadeAlphaTo(1.0, duration: 0.1)
+        let flashingBall = SKAction.sequence([
+            SKAction.fadeAlpha(to: 0.3, duration: 0.1),
+            SKAction.fadeAlpha(to: 1.0, duration: 0.1),
+            SKAction.fadeAlpha(to: 0.3, duration: 0.1),
+            SKAction.fadeAlpha(to: 1.0, duration: 0.1)
             ]);
-        var jumpBall = SKActionEx.jumpTo(lightBall
+        let jumpBall = SKActionEx.jumpTo(lightBall
             , targetPoint: idolPos
             , height: target.size.height - self.position.y
             , duration: 0.5);
-        var endBall = SKAction.runBlock { () -> Void in
+        let endBall = SKAction.run { () -> Void in
             lightBall.removeFromParent();
             callback(self);
         }
-        var actionBall = SKAction.sequence([flashingBall, jumpBall, endBall]);
-        lightBall.runAction(actionBall);
+        let actionBall = SKAction.sequence([flashingBall, jumpBall, endBall]);
+        lightBall.run(actionBall);
         
-        for i in 0 ... 10 {
+        for _ in 0 ... 10 {
             let line = SKSpriteNode(imageNamed: "sparkline.png");
-            line.blendMode = SKBlendMode.Add;
-            line.color = UIColor.yellowColor();
+            line.blendMode = SKBlendMode.add;
+            line.color = UIColor.yellow;
             line.colorBlendFactor = 1.0;
             line.xScale = 0.5;
             line.yScale = 0.1;
             line.alpha = 0.0;
             line.zPosition = z;
             let pr = CGFloat(1 + (arc4random() % 10)) * 0.1;
-            line.position = CGPointMake(self.position.x - self.size.width*0.5 + self.size.width*pr, self.position.y - self.size.height*0.5);
-            line.anchorPoint = CGPointMake(0.5, 0.05);
+            line.position = CGPoint(x: self.position.x - self.size.width*0.5 + self.size.width*pr, y: self.position.y - self.size.height*0.5);
+            line.anchorPoint = CGPoint(x: 0.5, y: 0.05);
             target.addChild(line);
             
-            let r = NSTimeInterval(1 + arc4random() % 5);
-            var wait = SKAction.waitForDuration(r * 0.1);
+            let r = TimeInterval(1 + arc4random() % 5);
+            let wait = SKAction.wait(forDuration: r * 0.1);
 
-            var disp = SKAction.runBlock({ () -> Void in
+            let disp = SKAction.run({ () -> Void in
                 line.alpha = 1.0;
             });
 
-            var grow = SKAction.group([
-                SKAction.scaleXTo(0.1, duration: 0.1),
-                SKAction.scaleYTo(2.0, duration: 0.2),
-                SKAction.fadeAlphaTo(0, duration: 0.2)
+            let grow = SKAction.group([
+                SKAction.scaleX(to: 0.1, duration: 0.1),
+                SKAction.scaleY(to: 2.0, duration: 0.2),
+                SKAction.fadeAlpha(to: 0, duration: 0.2)
                 ]);
             
-            var endLine = SKAction.runBlock { () -> Void in
+            let endLine = SKAction.run { () -> Void in
                 line.removeFromParent();
             }
-            var actionLine = SKAction.sequence([wait, disp, grow, endLine]);
-            line.runAction(actionLine);
+            let actionLine = SKAction.sequence([wait, disp, grow, endLine]);
+            line.run(actionLine);
         }
     }
   
-    func runHomeEffect(idolPos: CGPoint, target: SKScene, z: CGFloat, callback: (OtakuBase) -> Void) {
+    func runHomeEffect(_ idolPos: CGPoint, target: SKScene, z: CGFloat, callback: @escaping (OtakuBase) -> Void) {
         
         let lightBall = SKSpriteNode(imageNamed: "spark.png");
-        lightBall.blendMode = SKBlendMode.Add;
-        lightBall.color = UIColor.blueColor();
+        lightBall.blendMode = SKBlendMode.add;
+        lightBall.color = UIColor.blue;
         lightBall.colorBlendFactor = 1.0;
         lightBall.zPosition = z;
         lightBall.xScale = 1.5;
@@ -377,75 +373,75 @@ class OtakuBase : SKSpriteNode {
         lightBall.position = self.position;
         target.addChild(lightBall);
         
-        var face = SKSpriteNode(imageNamed: self.name!);
-        face.blendMode = SKBlendMode.Add;
-        face.color = UIColor.blueColor();
+        let face = SKSpriteNode(imageNamed: self.name!);
+        face.blendMode = SKBlendMode.add;
+        face.color = UIColor.blue;
         face.colorBlendFactor = 1.0;
         face.xScale = self.xScale;
         face.yScale = self.yScale;
         face.zPosition = 0;
         lightBall.addChild(face);
         
-        var flashingBall = SKAction.sequence([
-            SKAction.fadeAlphaTo(0.3, duration: 0.1),
-            SKAction.fadeAlphaTo(1.0, duration: 0.1),
-            SKAction.fadeAlphaTo(0.3, duration: 0.1),
-            SKAction.fadeAlphaTo(1.0, duration: 0.1)
+        let flashingBall = SKAction.sequence([
+            SKAction.fadeAlpha(to: 0.3, duration: 0.1),
+            SKAction.fadeAlpha(to: 1.0, duration: 0.1),
+            SKAction.fadeAlpha(to: 0.3, duration: 0.1),
+            SKAction.fadeAlpha(to: 1.0, duration: 0.1)
             ]);
-        var jumpBall = SKActionEx.jumpTo(lightBall
+        let jumpBall = SKActionEx.jumpTo(lightBall
             , targetPoint: idolPos
             , height: target.size.height - self.position.y
             , duration: 0.5);
-        var endBall = SKAction.runBlock { () -> Void in
+        let endBall = SKAction.run { () -> Void in
             lightBall.removeFromParent();
             callback(self);
         }
-        var actionBall = SKAction.sequence([flashingBall, jumpBall, endBall]);
-        lightBall.runAction(actionBall);
+        let actionBall = SKAction.sequence([flashingBall, jumpBall, endBall]);
+        lightBall.run(actionBall);
         
-        for i in 0 ... 10 {
+        for _ in 0 ... 10 {
             let line = SKSpriteNode(imageNamed: "sparkline.png");
-            line.blendMode = SKBlendMode.Add;
-            line.color = UIColor.blueColor();
+            line.blendMode = SKBlendMode.add;
+            line.color = UIColor.blue;
             line.colorBlendFactor = 1.0;
             line.xScale = 0.5;
             line.yScale = 0.1;
             line.alpha = 0.0;
             line.zPosition = z;
             let pr = CGFloat(1 + (arc4random() % 10)) * 0.1;
-            line.position = CGPointMake(self.position.x - self.size.width*0.5 + self.size.width*pr, self.position.y - self.size.height*0.5);
-            line.anchorPoint = CGPointMake(0.5, 0.05);
+            line.position = CGPoint(x: self.position.x - self.size.width*0.5 + self.size.width*pr, y: self.position.y - self.size.height*0.5);
+            line.anchorPoint = CGPoint(x: 0.5, y: 0.05);
             target.addChild(line);
             
-            let r = NSTimeInterval(1 + arc4random() % 5);
-            var wait = SKAction.waitForDuration(r * 0.1);
+            let r = TimeInterval(1 + arc4random() % 5);
+            let wait = SKAction.wait(forDuration: r * 0.1);
             
-            var disp = SKAction.runBlock({ () -> Void in
+            let disp = SKAction.run({ () -> Void in
                 line.alpha = 1.0;
             });
             
-            var grow = SKAction.group([
-                SKAction.scaleXTo(0.1, duration: 0.1),
-                SKAction.scaleYTo(2.0, duration: 0.2),
-                SKAction.fadeAlphaTo(0, duration: 0.2)
+            let grow = SKAction.group([
+                SKAction.scaleX(to: 0.1, duration: 0.1),
+                SKAction.scaleY(to: 2.0, duration: 0.2),
+                SKAction.fadeAlpha(to: 0, duration: 0.2)
                 ]);
             
-            var endLine = SKAction.runBlock { () -> Void in
+            let endLine = SKAction.run { () -> Void in
                 line.removeFromParent();
             }
-            var actionLine = SKAction.sequence([wait, disp, grow, endLine]);
-            line.runAction(actionLine);
+            let actionLine = SKAction.sequence([wait, disp, grow, endLine]);
+            line.run(actionLine);
         }
     }
 
     func runDefaultAction() {
-        let rot1 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
-        let stay1 = SKAction.waitForDuration(0.4);
-        let rot2 = SKAction.rotateByAngle(CGFloat(-(M_PI*0.05*2)), duration:0.1)
-        let stay2 = SKAction.waitForDuration(0.4);
-        let rot3 = SKAction.rotateByAngle(CGFloat(M_PI*0.05), duration:0.05)
+        let rot1 = SKAction.rotate(byAngle: CGFloat(Double.pi*0.05), duration:0.05)
+        let stay1 = SKAction.wait(forDuration: 0.4);
+        let rot2 = SKAction.rotate(byAngle: CGFloat(-(Double.pi*0.05*2)), duration:0.1)
+        let stay2 = SKAction.wait(forDuration: 0.4);
+        let rot3 = SKAction.rotate(byAngle: CGFloat(Double.pi*0.05), duration:0.05)
         let seq = SKAction.sequence([rot1, stay1, rot2, stay2, rot3]);
         
-        self.runAction(SKAction.repeatActionForever(seq));
+        self.run(SKAction.repeatForever(seq));
     }
 }
